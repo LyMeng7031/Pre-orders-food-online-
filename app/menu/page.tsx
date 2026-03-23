@@ -49,9 +49,26 @@ export default function MenuPage() {
         spicyLevel: 0,
         ingredients: ["Beef", "Lettuce", "Tomato", "Bun", "Special Sauce"],
         allergens: ["Gluten", "Soy"],
+        image:
+          "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
       },
       {
         _id: "2",
+        name: "Whole Roasted Pig",
+        description:
+          "Traditional whole roasted pig with crispy skin and tender meat",
+        price: 189.99,
+        category: "MEALS",
+        preparationTime: 180,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: ["Whole Pig", "Herbs", "Spices", "Seasoning"],
+        allergens: [],
+        image:
+          "https://images.unsplash.com/photo-1565299624946-b28f40a0b38b?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "3",
         name: "Caesar Salad",
         description: "Fresh romaine lettuce with parmesan cheese and croutons",
         price: 8.99,
@@ -66,9 +83,11 @@ export default function MenuPage() {
           "Caesar Dressing",
         ],
         allergens: ["Dairy", "Gluten"],
+        image:
+          "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
       },
       {
-        _id: "3",
+        _id: "4",
         name: "Spicy Chicken Wings",
         description: "Crispy chicken wings with our signature spicy sauce",
         price: 10.99,
@@ -78,9 +97,47 @@ export default function MenuPage() {
         spicyLevel: 3,
         ingredients: ["Chicken", "Spicy Sauce", "Seasoning"],
         allergens: [],
+        image:
+          "https://images.unsplash.com/photo-1562967916-eb822ee9c5c2?w=400&h=300&fit=crop",
       },
       {
-        _id: "4",
+        _id: "5",
+        name: "Bacon Wrapped Dates",
+        description: "Sweet dates wrapped in crispy bacon, perfect appetizer",
+        price: 12.99,
+        category: "APPETIZERS",
+        preparationTime: 25,
+        isAvailable: true,
+        spicyLevel: 1,
+        ingredients: ["Dates", "Bacon", "Goat Cheese"],
+        allergens: [],
+        image:
+          "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "6",
+        name: "Mini Taco Bites",
+        description:
+          "Star-shaped tortilla cups filled with seasoned beef and toppings",
+        price: 14.99,
+        category: "APPETIZERS",
+        preparationTime: 30,
+        isAvailable: true,
+        spicyLevel: 2,
+        ingredients: [
+          "Ground Beef",
+          "Tortilla",
+          "Lettuce",
+          "Cheese",
+          "Sour Cream",
+          "Tomatoes",
+        ],
+        allergens: ["Gluten", "Dairy"],
+        image:
+          "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "7",
         name: "Fresh Lemonade",
         description: "Refreshing homemade lemonade with natural ingredients",
         price: 3.99,
@@ -90,9 +147,54 @@ export default function MenuPage() {
         spicyLevel: 0,
         ingredients: ["Lemon", "Sugar", "Water", "Ice"],
         allergens: [],
+        image:
+          "https://images.unsplash.com/photo-1544148103-823bf1b32639?w=400&h=300&fit=crop",
       },
       {
-        _id: "5",
+        _id: "8",
+        name: "Fruit Infused Drinks",
+        description: "Three refreshing fruit-infused drinks in mason jars",
+        price: 8.99,
+        category: "DRINKS",
+        preparationTime: 10,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: ["Fresh Fruits", "Water", "Natural Sweeteners", "Ice"],
+        allergens: [],
+        image:
+          "https://images.unsplash.com/photo-1527378629828-91d2b464f4ed?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "9",
+        name: "Layered Berry Drinks",
+        description:
+          "Tall glasses with layered berry drinks and citrus garnish",
+        price: 7.99,
+        category: "DRINKS",
+        preparationTime: 8,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: ["Mixed Berries", "Citrus", "Ice", "Sweet Syrup"],
+        allergens: [],
+        image:
+          "https://images.unsplash.com/photo-1544148103-823bf1b32639?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "10",
+        name: "Red Berry Smoothies",
+        description: "Refreshing red berry smoothies with strawberry garnish",
+        price: 6.99,
+        category: "DRINKS",
+        preparationTime: 5,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: ["Strawberries", "Raspberries", "Yogurt", "Ice"],
+        allergens: ["Dairy"],
+        image:
+          "https://images.unsplash.com/photo-1502741126161-b048600d2e2e?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "11",
         name: "Chocolate Cake",
         description: "Rich chocolate cake with layers of chocolate frosting",
         price: 6.99,
@@ -102,9 +204,87 @@ export default function MenuPage() {
         spicyLevel: 0,
         ingredients: ["Chocolate", "Flour", "Sugar", "Eggs", "Butter"],
         allergens: ["Gluten", "Dairy", "Eggs"],
+        image:
+          "https://images.unsplash.com/photo-1578985545062-69928f1d1d65?w=400&h=300&fit=crop",
       },
       {
-        _id: "6",
+        _id: "12",
+        name: "Chocolate Ice Cream",
+        description:
+          "Three scoops of premium chocolate ice cream with sea salt",
+        price: 8.99,
+        category: "DESSERTS",
+        preparationTime: 2,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: ["Chocolate Ice Cream", "Sea Salt", "Chocolate Sauce"],
+        allergens: ["Dairy"],
+        image:
+          "https://images.unsplash.com/photo-1488900128323-21503983a07e?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "13",
+        name: "Mini Oreo Cheesecakes",
+        description:
+          "Individual mini cheesecakes topped with whipped cream and Oreo cookies",
+        price: 9.99,
+        category: "DESSERTS",
+        preparationTime: 3,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: [
+          "Cream Cheese",
+          "Oreo Cookies",
+          "Whipped Cream",
+          "Chocolate Crust",
+        ],
+        allergens: ["Gluten", "Dairy"],
+        image:
+          "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "14",
+        name: "Layered Chocolate Mousse",
+        description:
+          "Elegant glasses with layered chocolate mousse and whipped cream",
+        price: 7.99,
+        category: "DESSERTS",
+        preparationTime: 5,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: [
+          "Chocolate",
+          "Heavy Cream",
+          "Sugar",
+          "Eggs",
+          "Chocolate Shavings",
+        ],
+        allergens: ["Dairy", "Eggs"],
+        image:
+          "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "15",
+        name: "Ice Cream Cake",
+        description: "Frozen dessert with crumbled topping and cherry garnish",
+        price: 10.99,
+        category: "DESSERTS",
+        preparationTime: 3,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: [
+          "Ice Cream",
+          "Cookie Crumbs",
+          "Whipped Cream",
+          "Cherry",
+          "Caramel",
+        ],
+        allergens: ["Dairy", "Gluten"],
+        image:
+          "https://images.unsplash.com/photo-1578985545062-69928f1d1d65?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "16",
         name: "French Fries",
         description: "Crispy golden french fries with sea salt",
         price: 4.99,
@@ -114,6 +294,64 @@ export default function MenuPage() {
         spicyLevel: 0,
         ingredients: ["Potatoes", "Sea Salt", "Oil"],
         allergens: [],
+        image:
+          "https://images.unsplash.com/photo-1576107611927-4438a9a3f2fa?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "17",
+        name: "Assorted Snack Platter",
+        description:
+          "Variety of crackers, pretzels, cheese puffs and baked goods",
+        price: 15.99,
+        category: "SNACKS",
+        preparationTime: 5,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: [
+          "Crackers",
+          "Pretzels",
+          "Cheese Puffs",
+          "Various Baked Items",
+        ],
+        allergens: ["Gluten", "Dairy"],
+        image:
+          "https://images.unsplash.com/photo-1586190848861-99af4344e814?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "18",
+        name: "Gourmet Snack Collection",
+        description:
+          "Premium selection of popcorn, chips, candies, cookies and dips",
+        price: 24.99,
+        category: "SNACKS",
+        preparationTime: 5,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: ["Popcorn", "Chips", "Candies", "Cookies", "Various Dips"],
+        allergens: ["Gluten", "Dairy", "Nuts"],
+        image:
+          "https://images.unsplash.com/photo-1542691457-cbe4df041eb2?w=400&h=300&fit=crop",
+      },
+      {
+        _id: "19",
+        name: "Caprese Skewers",
+        description:
+          "Cantaloupe, prosciutto, mozzarella and basil with balsamic glaze",
+        price: 13.99,
+        category: "APPETIZERS",
+        preparationTime: 15,
+        isAvailable: true,
+        spicyLevel: 0,
+        ingredients: [
+          "Cantaloupe",
+          "Prosciutto",
+          "Mozzarella",
+          "Fresh Basil",
+          "Balsamic Glaze",
+        ],
+        allergens: ["Dairy"],
+        image:
+          "https://images.unsplash.com/photo-1502741126161-b048600d2e2e?w=400&h=300&fit=crop",
       },
     ];
 
@@ -130,8 +368,18 @@ export default function MenuPage() {
     return matchesSearch && matchesCategory && food.isAvailable;
   });
 
+  useEffect(() => {
+    // Load cart from localStorage on component mount
+    const savedCart = localStorage.getItem("foodCart");
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
+
   const addToCart = (food: MenuItem) => {
-    setCart([...cart, { ...food, quantity: 1 }]);
+    const newCart = [...cart, { ...food, quantity: 1 }];
+    setCart(newCart);
+    localStorage.setItem("foodCart", JSON.stringify(newCart));
   };
 
   if (loading) {
@@ -205,8 +453,16 @@ export default function MenuPage() {
               key={food._id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-400 text-6xl">🍽️</span>
+              <div className="h-48 bg-gray-200 flex items-center justify-center relative overflow-hidden">
+                {food.image ? (
+                  <img
+                    src={food.image}
+                    alt={food.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-400 text-6xl">🍽️</span>
+                )}
               </div>
               <div className="p-6">
                 <div className="flex items-start justify-between mb-2">
