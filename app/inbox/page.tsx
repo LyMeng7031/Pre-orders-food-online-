@@ -118,7 +118,7 @@ export default function InboxPage() {
       {/* Header */}
       <div className="border-b p-4">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">Inbox</h1>
+          <h1 className="text-2xl text-gray-700 font-bold">Inbox</h1>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
             onClick={() => setIsComposeOpen(true)}
@@ -137,7 +137,7 @@ export default function InboxPage() {
           <input
             type="text"
             placeholder=" emails..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="text-gray-700 w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -155,15 +155,15 @@ export default function InboxPage() {
           onChange={handleSelectAll}
           className="rounded"
         />
-        <button className="flex items-center gap-2 px-3 py-1 hover:bg-gray-100 rounded">
+        <button className="flex items-center gap-2 px-3 py-1 text-gray-700 hover:bg-gray-100 rounded">
           <Archive size={16} />
           Archive
         </button>
-        <button className="flex items-center gap-2 px-3 py-1 hover:bg-gray-100 rounded">
+        <button className="flex items-center gap-2 px-3 py-1 text-gray-700 hover:bg-gray-100 rounded">
           <Trash2 size={16} />
           Delete
         </button>
-        <button className="flex items-center gap-2 px-3 py-1 hover:bg-gray-100 rounded">
+        <button className="flex items-center gap-2 px-3 py-1 text-gray-700 hover:bg-gray-100 rounded">
           <Star size={16} />
           Mark as starred
         </button>

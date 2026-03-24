@@ -408,7 +408,7 @@ export default function OwnerProfilePage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="John Doe"
                   />
                 </div>
@@ -423,7 +423,7 @@ export default function OwnerProfilePage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -437,7 +437,7 @@ export default function OwnerProfilePage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="+1 234 567 8900"
                   />
                 </div>
@@ -452,7 +452,7 @@ export default function OwnerProfilePage() {
                     value={formData.restaurantName}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Amazing Restaurant"
                   />
                 </div>
@@ -468,7 +468,7 @@ export default function OwnerProfilePage() {
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="123 Main St, City, State 12345"
                 />
               </div>
@@ -483,7 +483,7 @@ export default function OwnerProfilePage() {
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Tell customers about your restaurant, your story, and what makes your food special..."
                 />
               </div>
@@ -504,7 +504,7 @@ export default function OwnerProfilePage() {
                     value={formData.cuisine}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select cuisine type</option>
                     {cuisines.map((cuisine) => (
@@ -525,7 +525,7 @@ export default function OwnerProfilePage() {
                     value={formData.openingHours}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Mon-Sun: 9:00 AM - 10:00 PM"
                   />
                 </div>
@@ -541,7 +541,7 @@ export default function OwnerProfilePage() {
                     onChange={handleChange}
                     step="0.1"
                     min="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="5"
                   />
                 </div>
@@ -557,7 +557,7 @@ export default function OwnerProfilePage() {
                     onChange={handleChange}
                     step="0.01"
                     min="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border text-gray-700 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="10.00"
                   />
                 </div>
