@@ -62,12 +62,12 @@ export default function EmailRow({
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-3">
-              <span className={`font-medium ${!email.read ? "font-bold" : ""}`}>
+              <span className={`text-gray-600 font-medium ${!email.read ? "font-bold" : ""}`}>
                 {email.sender}
               </span>
               {email.label && (
                 <span
-                  className={`px-2 py-1 text-xs text-white rounded-full ${labelColors[email.label] || "bg-gray-500"}`}
+                  className={`px-2 py-1  text-xs text-white rounded-full ${labelColors[email.label] || "bg-gray-500"}`}
                 >
                   {email.label}
                 </span>
@@ -78,7 +78,7 @@ export default function EmailRow({
             </span>
           </div>
 
-          <div className={`text-sm ${!email.read ? "font-semibold" : ""} mb-1`}>
+          <div className={`text-gray-500 text-sm ${!email.read ? "font-semibold" : ""} mb-1`}>
             {email.subject}
           </div>
 

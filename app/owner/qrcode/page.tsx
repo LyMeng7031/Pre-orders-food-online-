@@ -171,7 +171,7 @@ export default function QRCodePage() {
                   type="text"
                   value={shareableLink}
                   readOnly
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="flex-1 px-4 py-2 border text-gray-700 border-gray-300 rounded-lg bg-gray-50"
                 />
                 <button
                   onClick={copyToClipboard}
@@ -179,7 +179,7 @@ export default function QRCodePage() {
                 >
                   {copied ? (
                     <>
-                      <Check className="w-4 h-4" />
+                      <Check className="w-4 h-4 " />
                       Copied!
                     </>
                   ) : (
@@ -229,7 +229,8 @@ export default function QRCodePage() {
                     3
                   </div>
                   <p>
-                    Customers click the link or scan your QR code to view your
+                    Customers click themhong — 4:29 PMMonday, March 23, 2026 at 4:29 PM
+ link or scan your QR code to view your
                     menu and place orders directly.
                   </p>
                 </div>
