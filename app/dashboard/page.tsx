@@ -12,6 +12,7 @@ import {
   Store,
   TrendingUp,
   QrCode,
+  Calendar,
 } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
 
@@ -158,6 +159,23 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
+            href="/owner/deadline-orders"
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                <Calendar className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Deadline Orders
+                </h3>
+                <p className="text-gray-600 text-sm">Manage scheduled orders</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
             href="/owner/orders"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
           >
@@ -167,7 +185,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Manage Orders
+                  Regular Orders
                 </h3>
                 <p className="text-gray-600 text-sm">
                   View and manage customer orders
