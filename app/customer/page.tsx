@@ -10,6 +10,7 @@ import {
   LogOut,
   Search,
   Clock,
+  MessageCircle,
 } from "lucide-react";
 
 interface User {
@@ -105,6 +106,42 @@ export default function CustomerPage() {
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Link
+            href="/chat"
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                <MessageCircle className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Messages
+                </h3>
+                <p className="text-gray-600 text-sm">Chat with restaurants</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/deadline-booking"
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                <Clock className="w-6 h-6 text-orange-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Deadline Booking
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Schedule orders for specific time
+                </p>
+              </div>
+            </div>
+          </Link>
+
           <Link
             href="/menu"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"

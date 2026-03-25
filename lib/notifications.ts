@@ -75,9 +75,63 @@ export const notificationTemplates = {
     priority: "MEDIUM",
   }),
 
+  deadlineOrderPlaced: (
+    orderId: string,
+    customerName: string,
+    restaurantName: string,
+    deadlineTime: Date,
+  ) => ({
+    type: "ORDER_PLACED",
+    title: "New Deadline Order! ",
+    message: `${customerName} placed a deadline order for ${new Date(
+      deadlineTime,
+    ).toLocaleString()}`,
+    relatedId: orderId,
+    relatedType: "deadlineOrder",
+    actionUrl: `/owner/deadline-orders`,
+    priority: "HIGH",
+  }),
+
+  deadlineOrderStatusUpdate: (orderId: string, status: string) => ({
+    type: "ORDER_STATUS",
+    title: `Deadline Order ${status}`,
+    message: `Your deadline order has been ${status.toLowerCase()}`,
+    relatedId: orderId,
+    relatedType: "deadlineOrder",
+    actionUrl: `/deadline-orders/${orderId}`,
+    priority: "MEDIUM",
+  }),
+
+  deadlineWarning: (orderId: string, deadlineTime: Date) => ({
+    type: "DELIVERY_UPDATE",
+    title: " Deadline Approaching!",
+    message: `Order deadline is approaching: ${new Date(
+      deadlineTime,
+    ).toLocaleString()}`,
+    relatedId: orderId,
+    relatedType: "deadlineOrder",
+    actionUrl: `/owner/deadline-orders`,
+    priority: "HIGH",
+  }),
+
+  newChatMessage: (
+    orderId: string,
+    senderName: string,
+    recipientName: string,
+    content: string,
+  ) => ({
+    type: "SYSTEM",
+    title: "New Message ",
+    message: `${senderName} sent you a message: "${content.substring(0, 50)}${content.length > 50 ? "..." : ""}"`,
+    relatedId: orderId,
+    relatedType: "chatMessage",
+    actionUrl: "/chat",
+    priority: "MEDIUM",
+  }),
+
   ownerApproved: () => ({
     type: "OWNER_APPROVED",
-    title: "Account Approved! 🎉",
+    title: "Account Approved! ",
     message:
       "Your restaurant owner account has been approved. You can now start managing your restaurant!",
     actionUrl: "/dashboard",
