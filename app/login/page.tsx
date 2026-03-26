@@ -52,12 +52,23 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
+        // Check if owner is approved
+        if (data.user.role === "OWNER" && !data.user.isApproved) {
+          setError(
+            "Your restaurant owner account is pending admin approval. Please wait for approval before accessing the dashboard.",
+          );
+          setLoading(false);
+          return;
+        }
+
         // Store token in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
         // Redirect based on user role
-        if (data.user.role === "OWNER") {
+        if (data.user.role === "ADMIN") {
+          router.push("/admin");
+        } else if (data.user.role === "OWNER") {
           router.push("/dashboard");
         } else {
           router.push("/customer");

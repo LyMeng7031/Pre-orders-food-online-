@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 export async function POST(req: Request) {
   await connectDB();
 
-  const { email, password } = await req.json();
+  const { email, password: loginPassword } = await req.json();
 
   const user = await User.findOne({ email });
 
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "User not found" });
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(loginPassword, user.password);
 
   if (!isMatch) {
     return Response.json({ error: "Wrong password" });
@@ -26,5 +26,9 @@ export async function POST(req: Request) {
     process.env.JWT_SECRET!,
   );
 
-  return Response.json({ token, user });
+  // Return user without password
+  const userObj = user.toObject();
+  const { password: userPassword, ...userWithoutPassword } = userObj;
+
+  return Response.json({ token, user: userWithoutPassword });
 }

@@ -60,7 +60,13 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        router.push("/login?message=Registration successful! Please login.");
+        if (formData.role === "OWNER") {
+          router.push(
+            "/login?message=Registration successful! Your restaurant owner account is pending admin approval. You'll be notified when approved.",
+          );
+        } else {
+          router.push("/login?message=Registration successful! Please login.");
+        }
       } else {
         setError(data.error || "Registration failed");
       }
@@ -114,6 +120,16 @@ export default function Register() {
                 <option value="OWNER">Restaurant Owner</option>
               </select>
             </div>
+
+            {formData.role === "OWNER" && (
+              <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded">
+                <p className="text-sm">
+                  <strong>📋 Note:</strong> Restaurant owner accounts require
+                  admin approval before you can start managing your restaurant.
+                  You'll receive a notification once your account is approved.
+                </p>
+              </div>
+            )}
 
             <div>
               <label

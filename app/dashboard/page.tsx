@@ -13,6 +13,7 @@ import {
   TrendingUp,
   QrCode,
 } from "lucide-react";
+import NotificationCenter from "@/components/NotificationCenter";
 
 interface User {
   _id: string;
@@ -28,7 +29,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check authentication and user role
+    // Check authentication and approval
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
 
@@ -39,7 +40,12 @@ export default function DashboardPage() {
 
     const parsedUser = JSON.parse(userData);
     if (parsedUser.role !== "OWNER") {
-      router.push("/customer");
+      router.push(parsedUser.role === "ADMIN" ? "/admin" : "/customer");
+      return;
+    }
+
+    if (!parsedUser.isApproved) {
+      router.push("/login?message=Your account is pending admin approval.");
       return;
     }
 
@@ -80,18 +86,17 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              <NotificationCenter />
               <div className="flex items-center gap-2">
                 {user?.profileImage ? (
                   <img
                     src={user.profileImage}
                     alt={user.name}
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-8 h-8 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold">
-                      {user?.name?.charAt(0).toUpperCase()}
-                    </span>
+                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                    <Users className="w-5 h-5 text-gray-600" />
                   </div>
                 )}
                 <span className="text-gray-700">{user?.name}</span>
@@ -151,7 +156,26 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link
+            href="/owner/orders"
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                <Package className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Manage Orders
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  View and manage customer orders
+                </p>
+              </div>
+            </div>
+          </Link>
+
           <Link
             href="/owner/profile"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
