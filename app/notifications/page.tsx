@@ -250,7 +250,7 @@ export default function NotificationsPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-1 text-sm"
+                className="border text-gray-600 border-gray-300 rounded-lg px-3 py-1 text-sm"
               >
                 <option value="ALL">All Types</option>
                 <option value="ORDER_PLACED">Order Placed</option>
@@ -267,7 +267,7 @@ export default function NotificationsPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-1 text-sm"
+                className="border text-gray-600 border-gray-300 rounded-lg px-3 py-1 text-sm"
               >
                 <option value="ALL">All</option>
                 <option value="UNREAD">Unread</option>
@@ -325,7 +325,7 @@ export default function NotificationsPage() {
                           {notification.message}
                         </p>
 
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 text-sm text-gray-600">
                           <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
                             {formatTime(notification.createdAt)}

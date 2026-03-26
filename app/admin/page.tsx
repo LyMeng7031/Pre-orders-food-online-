@@ -278,13 +278,13 @@ export default function AdminDashboard() {
                 placeholder="Search by name, email, or restaurant..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 border text-gray-600 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border text-gray-600 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="ALL">All Status</option>
               <option value="PENDING">Pending Approval</option>
@@ -446,17 +446,17 @@ export default function AdminDashboard() {
                     Personal Information
                   </h3>
                   <div className="mt-2 space-y-2">
-                    <p>
+                    <p className="text-gray-600">
                       <strong>Name:</strong> {selectedOwner.name}
                     </p>
-                    <p>
+                    <p className="text-gray-600">
                       <strong>Email:</strong> {selectedOwner.email}
                     </p>
-                    <p>
-                      <strong>Phone:</strong>{" "}
+                    <p className="text-gray-600">
+                      <strong >Phone:</strong>{" "}
                       {selectedOwner.phone || "Not provided"}
                     </p>
-                    <p>
+                    <p className="text-gray-600">
                       <strong>Address:</strong>{" "}
                       {selectedOwner.address || "Not provided"}
                     </p>
@@ -468,15 +468,15 @@ export default function AdminDashboard() {
                     Restaurant Information
                   </h3>
                   <div className="mt-2 space-y-2">
-                    <p>
+                    <p className="text-gray-600">
                       <strong>Restaurant Name:</strong>{" "}
                       {selectedOwner.restaurantName || "Not provided"}
                     </p>
-                    <p>
+                    <p className="text-gray-600">
                       <strong>Cuisine:</strong>{" "}
                       {selectedOwner.cuisine || "Not provided"}
                     </p>
-                    <p>
+                    <p className="text-gray-600">
                       <strong>Description:</strong>{" "}
                       {selectedOwner.restaurantDescription || "Not provided"}
                     </p>
@@ -489,7 +489,7 @@ export default function AdminDashboard() {
                   </h3>
                   <div className="mt-2 space-y-2">
                     <p>
-                      <strong>Status:</strong>
+                      <strong className="text-gray-600">Status:</strong>
                       <span
                         className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
                           selectedOwner.isApproved
@@ -506,13 +506,13 @@ export default function AdminDashboard() {
                             : "Pending"}
                       </span>
                     </p>
-                    <p>
+                    <p className="text-gray-600">
                       <strong>Applied Date:</strong>{" "}
                       {new Date(selectedOwner.createdAt).toLocaleDateString()}
                     </p>
                     {selectedOwner.rejectionReason && (
-                      <p>
-                        <strong>Rejection Reason:</strong>{" "}
+                      <p className="text-gray-600">
+                        <strong >Rejection Reason:</strong>{" "}
                         {selectedOwner.rejectionReason}
                       </p>
                     )}
