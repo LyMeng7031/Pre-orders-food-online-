@@ -125,30 +125,60 @@ export async function GET(request: NextRequest) {
 
     await mongoose.connect(process.env.MONGODB_URI || "");
 
-    // Get orders based on user role
-    let orders;
+    // Get query parameters for pagination and filtering
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const search = searchParams.get("search") || "";
+    const status = searchParams.get("status") || "";
+
+    // Build query
+    let query: any = {};
+
+    // Filter by user role
     if (decoded.role === "CUSTOMER") {
-      // Customers see their own orders
-      orders = await Order.find({ customer: decoded.userId })
-        .populate("owner", "name restaurantName")
-        .populate("items.product", "name image")
-        .sort({ createdAt: -1 });
+      query.customer = decoded.userId;
     } else if (decoded.role === "OWNER") {
-      // Owners see orders for their restaurant
-      orders = await Order.find({ owner: decoded.userId })
-        .populate("customer", "name email phone")
-        .populate("items.product", "name image")
-        .sort({ createdAt: -1 });
-    } else {
-      // Admins see all orders
-      orders = await Order.find({})
-        .populate("customer", "name email phone")
-        .populate("owner", "name restaurantName")
-        .populate("items.product", "name image")
-        .sort({ createdAt: -1 });
+      query.owner = decoded.userId;
     }
 
-    return NextResponse.json({ orders });
+    // Add status filter
+    if (status) {
+      query.status = status;
+    }
+
+    // Add search filter
+    if (search) {
+      query.$or = [
+        { orderNumber: { $regex: search, $options: "i" } },
+        { "customer.name": { $regex: search, $options: "i" } },
+        { "customer.email": { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Get orders with pagination
+    const skip = (page - 1) * limit;
+    const orders = await Order.find(query)
+      .populate("customer", "name email phone")
+      .populate("owner", "name restaurantName")
+      .populate("items.product", "name image")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // Get total count for pagination
+    const total = await Order.countDocuments(query);
+
+    return NextResponse.json({
+      orders,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     console.error("Error fetching orders:", error);
     return NextResponse.json(
