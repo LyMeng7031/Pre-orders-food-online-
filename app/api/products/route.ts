@@ -88,19 +88,61 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    // Get user and verify role
     await mongoose.connect(process.env.MONGODB_URI || "");
+
+    // Get user and verify role
     const user = await User.findById(decoded.userId);
     if (!user || user.role !== "OWNER") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    // Get products for this owner
-    const products = await Product.find({ owner: user._id })
-      .sort({ createdAt: -1 })
-      .populate("owner", "name email");
+    // Get query parameters for filtering and pagination
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const search = searchParams.get("search") || "";
+    const category = searchParams.get("category") || "";
+    const status = searchParams.get("status") || "";
 
-    return NextResponse.json({ products });
+    // Build query
+    const query: any = { owner: user._id };
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    if (status) {
+      query.isAvailable = status === "available";
+    }
+
+    // Get products with pagination
+    const skip = (page - 1) * limit;
+    const products = await Product.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // Get total count for pagination
+    const total = await Product.countDocuments(query);
+
+    return NextResponse.json({
+      products,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     console.error("Error fetching products:", error);
     return NextResponse.json(
