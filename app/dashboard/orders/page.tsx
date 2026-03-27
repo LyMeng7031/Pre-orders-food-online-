@@ -257,7 +257,7 @@ export default function OrdersPage() {
                   placeholder="Search by order number, customer name..."
                   value={searchTerm}
                   onChange={(value) => setSearchTerm(value)}
-                  className="pl-10"
+                  className="pl-10 text-gray-600"
                 />
               </div>
             </div>
@@ -267,7 +267,7 @@ export default function OrdersPage() {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border text-gray-600 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Status</option>
                 <option value="PENDING">Pending</option>

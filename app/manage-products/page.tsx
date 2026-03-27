@@ -392,6 +392,7 @@ export default function ManageProductsPage() {
           error={errors.name}
           required
           icon={Package}
+          className="text-gray-600"
         />
 
         <Input
@@ -404,6 +405,7 @@ export default function ManageProductsPage() {
           error={errors.price}
           required
           icon={DollarSign}
+          className="text-gray-600"
         />
 
         <Select
@@ -413,6 +415,7 @@ export default function ManageProductsPage() {
           error={errors.category}
           options={CATEGORIES}
           placeholder="Select category"
+          className="text-gray-600"
         />
 
         <Select
@@ -420,6 +423,7 @@ export default function ManageProductsPage() {
           value={formData.spicyLevel}
           onChange={(value) => setFormData({ ...formData, spicyLevel: value })}
           options={SPICY_LEVELS}
+          className="text-gray-600"
         />
 
         <Input
@@ -431,6 +435,7 @@ export default function ManageProductsPage() {
             setFormData({ ...formData, preparationTime: value })
           }
           icon={Clock}
+          className="text-gray-600"
         />
 
         <div className="flex items-center">
@@ -458,6 +463,7 @@ export default function ManageProductsPage() {
         required
         rows={3}
         placeholder="Describe your product..."
+        className="text-gray-600"
       />
 
       {/* Ingredients and Allergens */}
@@ -468,6 +474,7 @@ export default function ManageProductsPage() {
           onChange={(value) => setFormData({ ...formData, ingredients: value })}
           rows={3}
           placeholder="e.g., Tomato, Cheese, Basil"
+          className="text-gray-600"
         />
 
         <Textarea
@@ -476,6 +483,7 @@ export default function ManageProductsPage() {
           onChange={(value) => setFormData({ ...formData, allergens: value })}
           rows={3}
           placeholder="e.g., Nuts, Dairy, Gluten"
+          className="text-gray-600"
         />
       </div>
 
@@ -565,7 +573,7 @@ export default function ManageProductsPage() {
                   placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border text-gray-600 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -575,7 +583,7 @@ export default function ManageProductsPage() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border text-gray-600 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Categories</option>
                 {CATEGORIES.map((cat) => (
@@ -591,7 +599,7 @@ export default function ManageProductsPage() {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border text-gray-600 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Status</option>
                 <option value="available">Available</option>

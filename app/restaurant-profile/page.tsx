@@ -378,6 +378,7 @@ export default function RestaurantProfilePage() {
           onChange={(value) => setFormData({ ...formData, name: value })}
           error={errors.name}
           required
+          className="text-gray-600"
         />
 
         <Input
@@ -387,6 +388,7 @@ export default function RestaurantProfilePage() {
           onChange={(value) => setFormData({ ...formData, email: value })}
           error={errors.email}
           required
+          className="text-gray-600"
         />
 
         <Input
@@ -394,6 +396,7 @@ export default function RestaurantProfilePage() {
           type="tel"
           value={formData.phone}
           onChange={(value) => setFormData({ ...formData, phone: value })}
+          className="text-gray-600"
         />
       </div>
 
@@ -407,6 +410,7 @@ export default function RestaurantProfilePage() {
           }
           error={errors.restaurantName}
           required
+          className="text-gray-600"
         />
 
         <Textarea
@@ -417,6 +421,7 @@ export default function RestaurantProfilePage() {
           }
           rows={4}
           placeholder="Describe your restaurant, ambiance, specialties..."
+          className="text-gray-600"
         />
 
         <Select
@@ -426,6 +431,7 @@ export default function RestaurantProfilePage() {
           error={errors.cuisine}
           options={CUISINE_TYPES}
           placeholder="Select cuisine type"
+          className="text-gray-600"
         />
       </div>
 
@@ -440,6 +446,7 @@ export default function RestaurantProfilePage() {
           onChange={(value) =>
             setFormData({ ...formData, deliveryRadius: value })
           }
+          className="text-gray-600"
         />
 
         <Input
@@ -449,6 +456,7 @@ export default function RestaurantProfilePage() {
           step="1"
           value={formData.minOrder}
           onChange={(value) => setFormData({ ...formData, minOrder: value })}
+          className="text-gray-600"
         />
       </div>
 
@@ -477,7 +485,7 @@ export default function RestaurantProfilePage() {
                   })
                 }
                 placeholder="09:00-22:00"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 border text-gray-600 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           ))}
