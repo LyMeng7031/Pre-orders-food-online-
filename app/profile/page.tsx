@@ -299,7 +299,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setFormData({ ...formData!, name: e.target.value })
                       }
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border text-gray-600 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
                   </div>
@@ -314,7 +314,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setFormData({ ...formData!, email: e.target.value })
                       }
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border text-gray-600 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
                   </div>
@@ -329,7 +329,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setFormData({ ...formData!, phone: e.target.value })
                       }
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border text-gray-600 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -354,7 +354,7 @@ export default function ProfilePage() {
                             restaurantName: e.target.value,
                           })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border text-gray-600 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
 
@@ -368,7 +368,7 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setFormData({ ...formData!, cuisine: e.target.value })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border text-gray-600 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="e.g., Italian, Chinese, etc."
                       />
                     </div>
@@ -386,7 +386,7 @@ export default function ProfilePage() {
                             openingHours: e.target.value,
                           })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border text-gray-600 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="e.g., 9AM-10PM"
                       />
                     </div>
@@ -406,7 +406,7 @@ export default function ProfilePage() {
                             deliveryRadius: parseInt(e.target.value) || 5,
                           })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border text-gray-600 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
 
@@ -425,7 +425,7 @@ export default function ProfilePage() {
                             minOrder: parseFloat(e.target.value) || 0,
                           })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border text-gray-600 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
