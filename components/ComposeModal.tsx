@@ -15,7 +15,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
       <div className="bg-white rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl text-gray-600 font-semibold">New Message</h2>
+          <h2 className="text-xl text-gray-900 font-semibold">New Message</h2>
           <button onClick={onClose} className="p-1 text-gray-700 hover:bg-gray-100 rounded">
             <X size={20} />
           </button>

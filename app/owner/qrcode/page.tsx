@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Share2, Download, Copy, Check } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 
 interface User {
   _id: string;
@@ -39,7 +40,6 @@ export default function QRCodePage() {
   }, [router]);
 
   const generateShareableLink = (ownerId: string) => {
-    // Generate the shareable link
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
     const link = `${baseUrl}/owner/${ownerId}`;
     setShareableLink(link);
@@ -72,21 +72,15 @@ export default function QRCodePage() {
     }
   };
 
-  const generateQRCodeText = () => {
-    // Simple QR code representation using text
-    return `
-╔══════════════════════════════╗
-║                                ║
-║     SCAN TO VIEW MENU          ║
-║                                ║
-║  ${shareableLink.slice(0, 25)}  ║
-║  ${shareableLink.slice(25, 50)}  ║
-║  ${shareableLink.slice(50, 75) || ""}  ║
-║                                ║
-║     ${user?.name || "Menu"}           ║
-║                                ║
-╚══════════════════════════════╝
-    `.trim();
+  const downloadQR = () => {
+    const canvas = document.querySelector("canvas");
+    if (!canvas) return;
+
+    const url = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "qr-code.png";
+    link.click();
   };
 
   if (loading) {
@@ -137,21 +131,32 @@ export default function QRCodePage() {
                 place orders.
               </p>
 
-              <div className="flex justify-center mb-6">
-                <div className="p-4 bg-gray-100 rounded-lg shadow-lg inline-block">
-                  <div className="bg-white p-4 rounded">
-                    <div className="text-xs font-mono text-center">
-                      {generateQRCodeText()}
-                    </div>
-                  </div>
+              <div className="flex flex-col items-center mb-6">
+                {/* QR Image */}
+                <div className="p-4 bg-gray-100 rounded-lg shadow-lg">
+                  <QRCodeCanvas
+                    value={shareableLink}
+                    size={200}
+                    bgColor="#ffffff"
+                    fgColor="#000000"
+                    level="H"
+                  />
                 </div>
+
+                {/* Download Button */}
+                <button
+                  onClick={downloadQR}
+                  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Download QR
+                </button>
               </div>
 
               <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded mb-4">
                 <p className="text-sm">
-                  💡 <strong>Tip:</strong> Use an online QR code generator with
-                  your shareable link to create a printable QR code for your
-                  restaurant.
+                  💡 <strong>Tip:</strong> You can also share this QR code digitally
+                  or print it for your restaurant.
                 </p>
               </div>
             </div>
@@ -162,8 +167,7 @@ export default function QRCodePage() {
                 Shareable Link
               </h3>
               <p className="text-gray-600 mb-4">
-                Share this link on social media, websites, or with customers
-                directly.
+                Share this link on social media, websites, or with customers directly.
               </p>
 
               <div className="flex gap-2 mb-4">
@@ -211,8 +215,7 @@ export default function QRCodePage() {
                     1
                   </div>
                   <p>
-                    Copy your shareable link and use any online QR code
-                    generator to create a printable QR code.
+                    Copy your shareable link and use any online QR code generator to create a printable QR code.
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -220,8 +223,7 @@ export default function QRCodePage() {
                     2
                   </div>
                   <p>
-                    Share the link directly on social media, your website, or in
-                    messages with customers.
+                    Share the link directly on social media, your website, or in messages with customers.
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -229,9 +231,7 @@ export default function QRCodePage() {
                     3
                   </div>
                   <p>
-                    Customers click themhong — 4:29 PMMonday, March 23, 2026 at 4:29 PM
- link or scan your QR code to view your
-                    menu and place orders directly.
+                    Customers click the link or scan your QR code to view your menu and place orders directly.
                   </p>
                 </div>
               </div>
