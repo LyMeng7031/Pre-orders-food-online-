@@ -155,8 +155,8 @@ export default function QRCodePage() {
 
               <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded mb-4">
                 <p className="text-sm">
-                  💡 <strong>Tip:</strong> You can also share this QR code digitally
-                  or print it for your restaurant.
+                  💡 <strong>Tip:</strong> You can also share this QR code
+                  digitally or print it for your restaurant.
                 </p>
               </div>
             </div>
@@ -167,7 +167,8 @@ export default function QRCodePage() {
                 Shareable Link
               </h3>
               <p className="text-gray-600 mb-4">
-                Share this link on social media, websites, or with customers directly.
+                Share this link on social media, websites, or with customers
+                directly.
               </p>
 
               <div className="flex gap-2 mb-4">
@@ -215,7 +216,8 @@ export default function QRCodePage() {
                     1
                   </div>
                   <p>
-                    Copy your shareable link and use any online QR code generator to create a printable QR code.
+                    Copy your shareable link and use any online QR code
+                    generator to create a printable QR code.
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -223,7 +225,8 @@ export default function QRCodePage() {
                     2
                   </div>
                   <p>
-                    Share the link directly on social media, your website, or in messages with customers.
+                    Share the link directly on social media, your website, or in
+                    messages with customers.
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -231,7 +234,8 @@ export default function QRCodePage() {
                     3
                   </div>
                   <p>
-                    Customers click the link or scan your QR code to view your menu and place orders directly.
+                    Customers click the link or scan your QR code to view your
+                    menu and place orders directly.
                   </p>
                 </div>
               </div>

@@ -131,6 +131,8 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10");
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
 
     // Build query
     let query: any = {};
@@ -154,6 +156,17 @@ export async function GET(request: NextRequest) {
         { "customer.name": { $regex: search, $options: "i" } },
         { "customer.email": { $regex: search, $options: "i" } },
       ];
+    }
+
+    // Add date range filter
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        query.createdAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        query.createdAt.$lte = new Date(endDate);
+      }
     }
 
     // Get orders with pagination
