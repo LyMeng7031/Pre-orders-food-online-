@@ -31,7 +31,6 @@ interface User {
   role: string;
   profileImage?: string;
   restaurantName?: string;
-  isApproved: boolean;
 }
 
 interface DashboardStats {
