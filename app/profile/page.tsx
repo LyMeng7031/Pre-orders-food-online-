@@ -97,16 +97,16 @@ export default function ProfilePage() {
     if (file) {
       try {
         const token = localStorage.getItem("token");
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("folder", "restaurant-profiles");
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file);
+        uploadFormData.append("folder", "restaurant-profiles");
 
         const response = await fetch("/api/upload", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          body: formData,
+          body: uploadFormData,
         });
 
         if (response.ok) {
