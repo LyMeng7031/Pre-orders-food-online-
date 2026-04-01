@@ -151,16 +151,16 @@ export default function ManageProductsPage() {
     if (file) {
       try {
         const token = localStorage.getItem("token");
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("folder", "products");
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file);
+        uploadFormData.append("folder", "products");
 
         const response = await fetch("/api/upload", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          body: formData,
+          body: uploadFormData,
         });
 
         if (response.ok) {
