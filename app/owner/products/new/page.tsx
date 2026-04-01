@@ -22,7 +22,7 @@ export default function NewProductPage() {
     name: "",
     description: "",
     price: "",
-    category: "MEALS",
+    category: "MAIN_COURSE",
     preparationTime: "",
     spicyLevel: "0",
     ingredients: "",
@@ -52,17 +52,29 @@ export default function NewProductPage() {
     }
   }, [router]);
 
-  const categories = ["MEALS", "DRINKS", "SNACKS", "DESSERTS", "APPETIZERS"];
+  const categories = [
+    "MAIN_COURSE",
+    "APPETIZERS",
+    "BEVERAGES",
+    "DESSERTS",
+    "SOUPS",
+    "SALADS",
+    "SANDWICHES",
+    "PASTA",
+    "PIZZA",
+    "BREAKFAST",
+  ];
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,10 +84,10 @@ export default function NewProductPage() {
       reader.onloadend = () => {
         const result = reader.result as string;
         setImagePreview(result);
-        setFormData({
-          ...formData,
+        setFormData((prev) => ({
+          ...prev,
           image: result,
-        });
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -83,10 +95,10 @@ export default function NewProductPage() {
 
   const removeImage = () => {
     setImagePreview("");
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       image: "",
-    });
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,26 +106,62 @@ export default function NewProductPage() {
     setError("");
     setLoading(true);
 
+    // Client-side validation
+    if (!formData.name.trim()) {
+      setError("Product name is required");
+      setLoading(false);
+      return;
+    }
+    if (!formData.description.trim()) {
+      setError("Product description is required");
+      setLoading(false);
+      return;
+    }
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      setError("Please enter a valid price greater than 0");
+      setLoading(false);
+      return;
+    }
+    if (!formData.preparationTime || parseInt(formData.preparationTime) < 1) {
+      setError("Please enter a valid preparation time (at least 1 minute)");
+      setLoading(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        setError("Authentication required. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
       const productData = {
-        name: formData.name,
-        description: formData.description,
+        name: formData.name.trim(),
+        description: formData.description.trim(),
         price: parseFloat(formData.price),
-        category: formData.category,
+        category: formData.category.trim(), // Ensure category is properly trimmed
         preparationTime: parseInt(formData.preparationTime),
-        spicyLevel: parseInt(formData.spicyLevel),
+        spicyLevel: parseInt(formData.spicyLevel) || 0,
         ingredients: formData.ingredients
           .split(",")
           .map((item) => item.trim())
-          .filter((item) => item),
+          .filter((item) => item.length > 0),
         allergens: formData.allergens
           .split(",")
           .map((item) => item.trim())
-          .filter((item) => item),
+          .filter((item) => item.length > 0),
         image: formData.image,
       };
+
+      console.log("Sending product data:", productData);
+      console.log(
+        "Category value:",
+        formData.category,
+        "Type:",
+        typeof formData.category,
+      );
 
       const response = await fetch("/api/products", {
         method: "POST",
@@ -127,12 +175,15 @@ export default function NewProductPage() {
       const data = await response.json();
 
       if (response.ok) {
+        console.log("Product created successfully:", data);
         router.push("/owner/products?message=Product created successfully");
       } else {
+        console.error("Server error response:", data);
         setError(data.error || "Failed to create product");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      console.error("Network error:", err);
+      setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }

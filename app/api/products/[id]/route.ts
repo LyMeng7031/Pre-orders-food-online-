@@ -29,7 +29,7 @@ export async function PUT(
     }
 
     // Get product and verify ownership
-    const product = await Product.findById(params.id);
+    const product = await Product.findById((await params).id);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
@@ -55,7 +55,7 @@ export async function PUT(
 
     // Update product
     const updatedProduct = await Product.findByIdAndUpdate(
-      params.id,
+      (await params).id,
       {
         ...(name && { name }),
         ...(description && { description }),
@@ -110,7 +110,7 @@ export async function DELETE(
     }
 
     // Get product and verify ownership
-    const product = await Product.findById(params.id);
+    const product = await Product.findById((await params).id);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
@@ -120,7 +120,7 @@ export async function DELETE(
     }
 
     // Delete product
-    await Product.findByIdAndDelete(params.id);
+    await Product.findByIdAndDelete((await params).id);
 
     return NextResponse.json({ message: "Product deleted successfully" });
   } catch (error) {
@@ -157,7 +157,7 @@ export async function GET(
     }
 
     // Get product and verify ownership
-    const product = await Product.findById(params.id);
+    const product = await Product.findById((await params).id);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }

@@ -59,12 +59,7 @@ export default function OwnerOrdersPage() {
 
     const parsedUser = JSON.parse(userData);
     if (parsedUser.role !== "OWNER") {
-      router.push(parsedUser.role === "ADMIN" ? "/admin" : "/customer");
-      return;
-    }
-
-    if (!parsedUser.isApproved) {
-      router.push("/login?message=Your account is pending admin approval.");
+      router.push("/login");
       return;
     }
 
