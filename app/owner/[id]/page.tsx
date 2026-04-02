@@ -6,13 +6,12 @@ import Link from "next/link";
 import {
   ShoppingCart,
   Clock,
-  Star,
   Search,
-  ArrowLeft,
   Store,
   Phone,
   Mail,
   MapPin,
+  ChevronLeft,
 } from "lucide-react";
 
 interface Product {
@@ -72,7 +71,6 @@ export default function OwnerProfilePage() {
     try {
       const response = await fetch(`/api/owners/${params.id}`);
       const data = await response.json();
-
       if (response.ok) {
         setOwner(data.owner);
       }
@@ -85,7 +83,6 @@ export default function OwnerProfilePage() {
     try {
       const response = await fetch(`/api/owners/${params.id}/products`);
       const data = await response.json();
-
       if (response.ok) {
         setProducts(data.products);
       }
@@ -96,10 +93,25 @@ export default function OwnerProfilePage() {
     }
   };
 
+  // Optimized Add to Cart with Quantity Handling
   const addToCart = (product: Product) => {
-    const newCart = [...cart, { ...product, quantity: 1, ownerId: params.id }];
-    setCart(newCart);
-    localStorage.setItem("foodCart", JSON.stringify(newCart));
+    const existingCart = [...cart];
+    const itemIndex = existingCart.findIndex(
+      (item) => item._id === product._id,
+    );
+
+    if (itemIndex > -1) {
+      existingCart[itemIndex].quantity += 1;
+    } else {
+      existingCart.push({
+        ...product,
+        quantity: 1,
+        ownerId: params.id,
+      });
+    }
+
+    setCart(existingCart);
+    localStorage.setItem("foodCart", JSON.stringify(existingCart));
   };
 
   const categories = [
@@ -115,8 +127,11 @@ export default function OwnerProfilePage() {
     const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesCategory =
-      selectedCategory === "ALL" || product.category === selectedCategory;
+      selectedCategory === "ALL" ||
+      product.category?.toUpperCase() === selectedCategory;
+
     return matchesSearch && matchesCategory && product.isAvailable;
   });
 
@@ -144,7 +159,7 @@ export default function OwnerProfilePage() {
           </p>
           <Link
             href="/"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
           >
             Go Home
           </Link>
@@ -154,212 +169,194 @@ export default function OwnerProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Owner Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-6">
-          {/* Restaurant Cover Image */}
-          {owner.restaurantImage && (
-            <div className="mb-6 -mx-4 -mt-4">
-              <img
-                src={owner.restaurantImage}
-                alt={owner.restaurantName || owner.name}
-                className="w-full h-64 object-cover"
-              />
-            </div>
-          )}
+    <div className="min-h-screen bg-gray-50 pb-20 md:pb-0">
+      {/* Header with Back Button */}
+      <div className="bg-white shadow-sm border-b sticky top-0 z-30">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1 text-gray-600 font-medium"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Back
+          </button>
 
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex items-center gap-4">
-              {owner.profileImage ? (
-                <img
-                  src={owner.profileImage}
-                  alt={owner.name}
-                  className="w-20 h-20 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">
-                    {(owner.restaurantName || owner.name)
-                      .charAt(0)
-                      .toUpperCase()}
-                  </span>
-                </div>
-              )}
-              <div>
+          <Link
+            href="/cart"
+            className="relative p-2 bg-blue-50 text-blue-600 rounded-full"
+          >
+            <ShoppingCart className="w-6 h-6" />
+            {cart.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                {cart.reduce((acc, item) => acc + item.quantity, 0)}
+              </span>
+            )}
+          </Link>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-6">
+        {/* Restaurant Profile Card */}
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-8">
+          {owner.restaurantImage && (
+            <img
+              src={owner.restaurantImage}
+              alt="Banner"
+              className="w-full h-48 md:h-64 object-cover"
+            />
+          )}
+          <div className="p-6">
+            <div className="flex flex-col md:flex-row md:items-end gap-4 -mt-12 md:-mt-16">
+              <div className="relative">
+                {owner.profileImage ? (
+                  <img
+                    src={owner.profileImage}
+                    className="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover border-4 border-white shadow-md bg-white"
+                    alt={owner.name}
+                  />
+                ) : (
+                  <div className="w-24 h-24 md:w-32 md:h-32 bg-blue-600 rounded-2xl border-4 border-white shadow-md flex items-center justify-center text-white text-4xl font-bold">
+                    {(owner.restaurantName || owner.name).charAt(0)}
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
                 <h1 className="text-3xl font-bold text-gray-900">
                   {owner.restaurantName || owner.name}
                 </h1>
-                <p className="text-gray-600 text-lg">
-                  {owner.cuisine && `${owner.cuisine} Cuisine`}
+                <p className="text-blue-600 font-medium">
+                  {owner.cuisine || "International"} Cuisine
                 </p>
               </div>
             </div>
 
-            <div className="flex-1 md:text-right">
-              <Link
-                href="/cart"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                Cart ({cart.length})
-              </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 border-t pt-6">
+              <div className="flex items-center gap-2 text-gray-600 text-sm">
+                <Phone className="w-4 h-4 text-blue-500" />{" "}
+                {owner.phone || "No phone"}
+              </div>
+              <div className="flex items-center gap-2 text-gray-600 text-sm">
+                <Mail className="w-4 h-4 text-blue-500" /> {owner.email}
+              </div>
+              <div className="flex items-center gap-2 text-gray-600 text-sm">
+                <MapPin className="w-4 h-4 text-blue-500" />{" "}
+                {owner.address || "Main Street"}
+              </div>
+              <div className="flex items-center gap-2 text-gray-600 text-sm">
+                <Clock className="w-4 h-4 text-blue-500" />{" "}
+                {owner.openingHours || "08:00 AM - 10:00 PM"}
+              </div>
             </div>
           </div>
-
-          {/* Restaurant Description */}
-          {owner.restaurantDescription && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-gray-700 leading-relaxed">
-                {owner.restaurantDescription}
-              </p>
-            </div>
-          )}
-
-          {/* Restaurant Info */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            <div className="flex items-center gap-2 text-gray-600">
-              <Phone className="w-4 h-4" />
-              <span className="text-sm">{owner.phone || "Not available"}</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Mail className="w-4 h-4" />
-              <span className="text-sm">{owner.email}</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <MapPin className="w-4 h-4" />
-              <span className="text-sm">
-                {owner.address || "Address not provided"}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Clock className="w-4 h-4" />
-              <span className="text-sm">
-                {owner.openingHours || "Hours not specified"}
-              </span>
-            </div>
-          </div>
-
-          {/* Delivery Info */}
-          {(owner.deliveryRadius || owner.minOrder) && (
-            <div className="mt-4 flex gap-4">
-              {owner.deliveryRadius && (
-                <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                  🚚 Delivery within {owner.deliveryRadius} miles
-                </div>
-              )}
-              {owner.minOrder && owner.minOrder > 0 && (
-                <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  💰 Min order: ${owner.minOrder}
-                </div>
-              )}
-            </div>
-          )}
         </div>
-      </div>
 
-      {/* Menu Content */}
-      <div className="container mx-auto px-4 py-6">
-        {/* Search and Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        {/* Search & Categories */}
+        <div className="sticky top-[73px] bg-gray-50 py-4 z-20 space-y-4">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search for food items..."
+              placeholder="Search dishes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-12 pr-4 py-3 bg-white border-none rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <div className="flex gap-2 flex-wrap">
-            {categories.map((category) => (
+          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            {categories.map((cat) => (
               <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  selectedCategory === category
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-5 py-2 rounded-full whitespace-nowrap font-medium transition-all ${
+                  selectedCategory === cat
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "bg-white text-gray-600 hover:bg-gray-100"
                 }`}
               >
-                {category}
+                {cat}
               </button>
             ))}
           </div>
         </div>
 
         {/* Products Grid */}
-        {filteredProducts.length === 0 ? (
-          <div className="text-center py-12">
-            <span className="text-6xl mb-4 block">🔍</span>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No items found
-            </h3>
-            <p className="text-gray-600">
-              Try adjusting your search or filter criteria
-            </p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product._id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <div className="h-48 bg-gray-200 flex items-center justify-center relative overflow-hidden">
-                  {product.image ? (
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-gray-400 text-6xl">🍽️</span>
-                  )}
-                </div>
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {product.name}
-                    </h3>
-                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
-                      Available
-                    </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+          {filteredProducts.map((product) => (
+            <div
+              key={product._id}
+              className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col h-full"
+            >
+              <div className="relative h-48 w-full">
+                {product.image ? (
+                  <img
+                    src={product.image}
+                    className="w-full h-full object-cover rounded-t-2xl"
+                    alt={product.name}
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-100 flex items-center justify-center rounded-t-2xl text-4xl">
+                    🍽️
                   </div>
-                  <p className="text-gray-600 mb-4">{product.description}</p>
-
-                  <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {product.preparationTime} min
-                    </div>
-                    {product.spicyLevel > 0 && (
-                      <div className="flex items-center gap-1">
-                        <span>🌶️</span>
-                        {product.spicyLevel}/5
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-blue-600">
-                      ${product.price}
-                    </span>
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
-                    >
-                      <ShoppingCart className="w-4 h-4" />
-                      Add to Cart
-                    </button>
-                  </div>
+                )}
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-gray-800 flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> {product.preparationTime}m
                 </div>
               </div>
-            ))}
+
+              <div className="p-5 flex flex-col flex-1">
+                <h3 className="text-lg font-bold text-gray-900 mb-1">
+                  {product.name}
+                </h3>
+                <p className="text-gray-500 text-sm line-clamp-2 mb-4 flex-1">
+                  {product.description}
+                </p>
+
+                <div className="flex items-center justify-between mt-auto pt-4 border-t">
+                  <span className="text-xl font-black text-blue-600">
+                    ${product.price.toFixed(2)}
+                  </span>
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-xl transition-colors flex items-center gap-2 px-4"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    <span className="text-sm font-bold">Add</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-20">
+            <Search className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+            <p className="text-gray-500 font-medium">
+              No dishes found matching your criteria.
+            </p>
           </div>
         )}
       </div>
+
+      {/* Floating Mobile Cart Button */}
+      {cart.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md md:hidden z-50">
+          <Link
+            href="/cart"
+            className="bg-blue-600 text-white flex items-center justify-between px-6 py-4 rounded-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300"
+          >
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 p-2 rounded-lg">
+                <ShoppingCart className="w-5 h-5" />
+              </div>
+              <span className="font-bold">
+                {cart.reduce((acc, i) => acc + i.quantity, 0)} Items Added
+              </span>
+            </div>
+            <span className="font-black text-lg">View Cart</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

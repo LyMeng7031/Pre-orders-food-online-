@@ -405,52 +405,6 @@ export default function DashboardPage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Quick Actions
-            </h3>
-            <div className="space-y-3">
-              <Link
-                href="/manage-products"
-                className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-              >
-                <Plus className="w-5 h-5 text-blue-600" />
-                <span className="text-blue-600 font-medium">
-                  Add New Product
-                </span>
-              </Link>
-
-              <Link
-                href="/dashboard/orders"
-                className="flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
-              >
-                <Clock className="w-5 h-5 text-green-600" />
-                <span className="text-green-600 font-medium">
-                  View Recent Orders
-                </span>
-              </Link>
-
-              <Link
-                href="/restaurant-profile"
-                className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors"
-              >
-                <Settings className="w-5 h-5 text-orange-600" />
-                <span className="text-orange-600 font-medium">
-                  Update Profile
-                </span>
-              </Link>
-
-              <Link
-                href="/owner/qrcode"
-                className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
-              >
-                <QrCode className="w-5 h-5 text-purple-600" />
-                <span className="text-purple-600 font-medium">
-                  Generate QR Code
-                </span>
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
     </div>

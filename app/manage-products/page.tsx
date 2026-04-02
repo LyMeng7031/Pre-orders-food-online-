@@ -26,6 +26,8 @@ import Modal from "@/components/ui/Modal";
 import { ConfirmModal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 
+// --- CONSTANTS & INTERFACES ---
+
 interface Product {
   _id: string;
   name: string;
@@ -70,6 +72,207 @@ const SPICY_LEVELS = [
   { value: 4, label: "Very Hot" },
   { value: 5, label: "Extra Hot" },
 ];
+
+// --- EXTRACTED FORM COMPONENT (Prevents focus loss) ---
+
+interface ProductFormProps {
+  isEdit?: boolean;
+  formData: any;
+  setFormData: any;
+  imagePreview: string | null;
+  handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  removeImage: () => void;
+  errors: Record<string, string>;
+  submitting: boolean;
+  handleSubmit: (isEdit: boolean) => void;
+  resetForm: () => void;
+  closeModal: () => void;
+}
+
+const ProductForm = ({
+  isEdit = false,
+  formData,
+  setFormData,
+  imagePreview,
+  handleImageUpload,
+  removeImage,
+  errors,
+  submitting,
+  handleSubmit,
+  resetForm,
+  closeModal,
+}: ProductFormProps) => (
+  <div className="space-y-6">
+    {/* Product Image */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Product Image
+      </label>
+      <div className="flex items-center gap-4">
+        <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+          {imagePreview ? (
+            <img
+              src={imagePreview}
+              alt="Product"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <ImageIcon className="w-8 h-8 text-gray-400" />
+            </div>
+          )}
+        </div>
+        <div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+            id="product-image"
+          />
+          <label
+            htmlFor="product-image"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer inline-flex items-center gap-2"
+          >
+            <ImageIcon className="w-4 h-4" />
+            Upload Image
+          </label>
+          {imagePreview && (
+            <button
+              type="button"
+              onClick={removeImage}
+              className="text-red-500 hover:text-red-700 text-sm ml-2"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {/* Basic Information */}
+    <div className="grid md:grid-cols-2 gap-4">
+      <Input
+        label="Product Name"
+        value={formData.name}
+        onChange={(value) => setFormData({ ...formData, name: value })}
+        error={errors.name}
+        required
+        icon={Package}
+        className="text-gray-600"
+      />
+
+      <Input
+        label="Price ($)"
+        type="number"
+        step="0.01"
+        min="0"
+        value={formData.price}
+        onChange={(value) => setFormData({ ...formData, price: value })}
+        error={errors.price}
+        required
+        icon={DollarSign}
+        className="text-gray-600"
+      />
+
+      <Select
+        label="Category"
+        value={formData.category}
+        onChange={(value) => setFormData({ ...formData, category: value })}
+        error={errors.category}
+        options={CATEGORIES}
+        placeholder="Select category"
+        className="text-gray-600"
+      />
+
+      <Select
+        label="Spicy Level"
+        value={formData.spicyLevel}
+        onChange={(value) => setFormData({ ...formData, spicyLevel: value })}
+        options={SPICY_LEVELS}
+        className="text-gray-600"
+      />
+
+      <Input
+        label="Preparation Time (minutes)"
+        type="number"
+        min="1"
+        value={formData.preparationTime}
+        onChange={(value) =>
+          setFormData({ ...formData, preparationTime: value })
+        }
+        icon={Clock}
+        className="text-gray-600"
+      />
+
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="isAvailable"
+          checked={formData.isAvailable}
+          onChange={(e) =>
+            setFormData({ ...formData, isAvailable: e.target.checked })
+          }
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <label htmlFor="isAvailable" className="ml-2 text-sm text-gray-700">
+          Available for order
+        </label>
+      </div>
+    </div>
+
+    {/* Description */}
+    <Textarea
+      label="Description"
+      value={formData.description}
+      onChange={(value) => setFormData({ ...formData, description: value })}
+      error={errors.description}
+      required
+      rows={3}
+      placeholder="Describe your product..."
+      className="text-gray-600"
+    />
+
+    {/* Ingredients and Allergens */}
+    <div className="grid md:grid-cols-2 gap-4">
+      <Textarea
+        label="Ingredients (comma-separated)"
+        value={formData.ingredients}
+        onChange={(value) => setFormData({ ...formData, ingredients: value })}
+        rows={3}
+        placeholder="e.g., Tomato, Cheese, Basil"
+        className="text-gray-600"
+      />
+
+      <Textarea
+        label="Allergens (comma-separated)"
+        value={formData.allergens}
+        onChange={(value) => setFormData({ ...formData, allergens: value })}
+        rows={3}
+        placeholder="e.g., Nuts, Dairy, Gluten"
+        className="text-gray-600"
+      />
+    </div>
+
+    {/* Actions */}
+    <div className="flex justify-end gap-4">
+      <Button
+        onClick={() => {
+          resetForm();
+          closeModal();
+        }}
+        variant="secondary"
+      >
+        Cancel
+      </Button>
+      <Button onClick={() => handleSubmit(isEdit)} loading={submitting}>
+        {isEdit ? "Update Product" : "Create Product"}
+      </Button>
+    </div>
+  </div>
+);
+
+// --- MAIN PAGE COMPONENT ---
 
 export default function ManageProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -231,19 +434,15 @@ export default function ManageProductsPage() {
       });
 
       if (response.ok) {
-        const data = await response.json();
         alert(
           isEdit
             ? "Product updated successfully!"
             : "Product created successfully!",
         );
 
-        // Reset form and close modal
         resetForm();
         setShowCreateModal(false);
         setShowEditModal(false);
-
-        // Refresh products list
         await fetchProducts();
       } else {
         const errorData = await response.json();
@@ -333,177 +532,6 @@ export default function ManageProductsPage() {
     setImagePreview(null);
     setFormData({ ...formData, image: "" });
   };
-
-  const ProductForm = ({ isEdit = false }: { isEdit?: boolean }) => (
-    <div className="space-y-6">
-      {/* Product Image */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Product Image
-        </label>
-        <div className="flex items-center gap-4">
-          <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
-            {imagePreview ? (
-              <img
-                src={imagePreview}
-                alt="Product"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <ImageIcon className="w-8 h-8 text-gray-400" />
-              </div>
-            )}
-          </div>
-          <div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-              id="product-image"
-            />
-            <label
-              htmlFor="product-image"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer inline-flex items-center gap-2"
-            >
-              <ImageIcon className="w-4 h-4" />
-              Upload Image
-            </label>
-            {imagePreview && (
-              <button
-                type="button"
-                onClick={removeImage}
-                className="text-red-500 hover:text-red-700 text-sm ml-2"
-              >
-                Remove
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Basic Information */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <Input
-          label="Product Name"
-          value={formData.name}
-          onChange={(value) => setFormData({ ...formData, name: value })}
-          error={errors.name}
-          required
-          icon={Package}
-          className="text-gray-600"
-        />
-
-        <Input
-          label="Price ($)"
-          type="number"
-          step="0.01"
-          min="0"
-          value={formData.price}
-          onChange={(value) => setFormData({ ...formData, price: value })}
-          error={errors.price}
-          required
-          icon={DollarSign}
-          className="text-gray-600"
-        />
-
-        <Select
-          label="Category"
-          value={formData.category}
-          onChange={(value) => setFormData({ ...formData, category: value })}
-          error={errors.category}
-          options={CATEGORIES}
-          placeholder="Select category"
-          className="text-gray-600"
-        />
-
-        <Select
-          label="Spicy Level"
-          value={formData.spicyLevel}
-          onChange={(value) => setFormData({ ...formData, spicyLevel: value })}
-          options={SPICY_LEVELS}
-          className="text-gray-600"
-        />
-
-        <Input
-          label="Preparation Time (minutes)"
-          type="number"
-          min="1"
-          value={formData.preparationTime}
-          onChange={(value) =>
-            setFormData({ ...formData, preparationTime: value })
-          }
-          icon={Clock}
-          className="text-gray-600"
-        />
-
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="isAvailable"
-            checked={formData.isAvailable}
-            onChange={(e) =>
-              setFormData({ ...formData, isAvailable: e.target.checked })
-            }
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-          />
-          <label htmlFor="isAvailable" className="ml-2 text-sm text-gray-700">
-            Available for order
-          </label>
-        </div>
-      </div>
-
-      {/* Description */}
-      <Textarea
-        label="Description"
-        value={formData.description}
-        onChange={(value) => setFormData({ ...formData, description: value })}
-        error={errors.description}
-        required
-        rows={3}
-        placeholder="Describe your product..."
-        className="text-gray-600"
-      />
-
-      {/* Ingredients and Allergens */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <Textarea
-          label="Ingredients (comma-separated)"
-          value={formData.ingredients}
-          onChange={(value) => setFormData({ ...formData, ingredients: value })}
-          rows={3}
-          placeholder="e.g., Tomato, Cheese, Basil"
-          className="text-gray-600"
-        />
-
-        <Textarea
-          label="Allergens (comma-separated)"
-          value={formData.allergens}
-          onChange={(value) => setFormData({ ...formData, allergens: value })}
-          rows={3}
-          placeholder="e.g., Nuts, Dairy, Gluten"
-          className="text-gray-600"
-        />
-      </div>
-
-      {/* Actions */}
-      <div className="flex justify-end gap-4">
-        <Button
-          onClick={() => {
-            resetForm();
-            isEdit ? setShowEditModal(false) : setShowCreateModal(false);
-          }}
-          variant="secondary"
-        >
-          Cancel
-        </Button>
-        <Button onClick={() => handleSubmit(isEdit)} loading={submitting}>
-          {isEdit ? "Update Product" : "Create Product"}
-        </Button>
-      </div>
-    </div>
-  );
 
   if (loading && products.length === 0) {
     return (
@@ -757,7 +785,18 @@ export default function ManageProductsPage() {
         title="Create New Product"
         size="lg"
       >
-        <ProductForm />
+        <ProductForm
+          formData={formData}
+          setFormData={setFormData}
+          imagePreview={imagePreview}
+          handleImageUpload={handleImageUpload}
+          removeImage={removeImage}
+          errors={errors}
+          submitting={submitting}
+          handleSubmit={handleSubmit}
+          resetForm={resetForm}
+          closeModal={() => setShowCreateModal(false)}
+        />
       </Modal>
 
       {/* Edit Product Modal */}
@@ -767,7 +806,19 @@ export default function ManageProductsPage() {
         title="Edit Product"
         size="lg"
       >
-        <ProductForm isEdit />
+        <ProductForm
+          isEdit
+          formData={formData}
+          setFormData={setFormData}
+          imagePreview={imagePreview}
+          handleImageUpload={handleImageUpload}
+          removeImage={removeImage}
+          errors={errors}
+          submitting={submitting}
+          handleSubmit={handleSubmit}
+          resetForm={resetForm}
+          closeModal={() => setShowEditModal(false)}
+        />
       </Modal>
 
       {/* Delete Confirmation Modal */}
