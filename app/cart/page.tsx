@@ -126,9 +126,9 @@ export default function CartPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cart.map((item) => (
+              {cart.map((item, index) => (
                 <div
-                  key={item._id}
+                  key={`${item._id}-${index}`} // Combines ID and Index for uniqueness
                   className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex items-start gap-4">
