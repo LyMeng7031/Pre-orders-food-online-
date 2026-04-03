@@ -12,27 +12,25 @@ import {
   MapPin,
   Phone,
   Clock,
+  Utensils, // Added for Table Number icon
 } from "lucide-react";
 
 interface CartItem {
-  product: string;
-  quantity: number;
+  _id: string;
+  name: string;
   price: number;
-  specialInstructions: string;
-  productDetails: {
-    _id: string;
-    name: string;
-    price: number;
-    image?: string;
-    preparationTime: number;
-    owner: string;
-  };
+  quantity: number;
+  image?: string;
+  ownerId: string;
+  description?: string;
+  specialInstructions?: string;
 }
 
 export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [tableNumber, setTableNumber] = useState(""); // Added Table Number state
   const [orderForm, setOrderForm] = useState({
     deliveryAddress: "",
     deliveryPhone: "",
@@ -42,10 +40,9 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check authentication
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
-    const cartData = localStorage.getItem("cart");
+    const cartData = localStorage.getItem("foodCart"); // Using foodCart to match your previous code
 
     if (!token || !userData) {
       router.push("/login");
@@ -53,25 +50,17 @@ export default function CheckoutPage() {
     }
 
     const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== "CUSTOMER") {
-      router.push(parsedUser.role === "ADMIN" ? "/admin" : "/dashboard");
-      return;
-    }
-
     setUser(parsedUser);
 
-    // Load cart
     if (cartData) {
       try {
-        const parsedCart = JSON.parse(cartData);
-        setCart(parsedCart);
+        setCart(JSON.parse(cartData));
       } catch (error) {
         console.error("Error parsing cart:", error);
         setCart([]);
       }
     }
 
-    // Set default phone from user profile
     if (parsedUser.phone) {
       setOrderForm((prev) => ({ ...prev, deliveryPhone: parsedUser.phone }));
     }
@@ -81,19 +70,20 @@ export default function CheckoutPage() {
     const newCart = [...cart];
     newCart[index].quantity = Math.max(1, newCart[index].quantity + change);
     setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    localStorage.setItem("foodCart", JSON.stringify(newCart));
   };
 
   const removeFromCart = (index: number) => {
     const newCart = cart.filter((_, i) => i !== index);
     setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    localStorage.setItem("foodCart", JSON.stringify(newCart));
   };
 
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  // Integrated your placeOrder logic into the submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -101,13 +91,17 @@ export default function CheckoutPage() {
     try {
       const token = localStorage.getItem("token");
 
-      // Prepare order items
-      const orderItems = cart.map((item) => ({
-        product: item.product,
-        quantity: item.quantity,
-        specialInstructions: item.specialInstructions,
-        owner: item.productDetails.owner,
-      }));
+      const orderData = {
+        customerId: user._id,
+        ownerId: cart[0]?.ownerId,
+        items: cart,
+        tableNumber, // Added Table Number to payload
+        total: calculateTotal(),
+        deliveryAddress: orderForm.deliveryAddress,
+        deliveryPhone: orderForm.deliveryPhone,
+        orderNotes: orderForm.orderNotes,
+        paymentMethod: orderForm.paymentMethod,
+      };
 
       const response = await fetch("/api/orders", {
         method: "POST",
@@ -115,24 +109,16 @@ export default function CheckoutPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          items: orderItems,
-          deliveryAddress: orderForm.deliveryAddress,
-          deliveryPhone: orderForm.deliveryPhone,
-          orderNotes: orderForm.orderNotes,
-          paymentMethod: orderForm.paymentMethod,
-        }),
+        body: JSON.stringify(orderData),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Clear cart
-        localStorage.removeItem("cart");
+        localStorage.removeItem("foodCart");
         setCart([]);
-
-        // Redirect to order confirmation
-        router.push(`/orders/${data.order._id}?success=true`);
+        alert("Order placed! The kitchen is preparing your food.");
+        router.push("/orders");
       } else {
         alert(data.error || "Failed to create order");
       }
@@ -152,11 +138,8 @@ export default function CheckoutPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Your cart is empty
           </h2>
-          <p className="text-gray-600 mb-6">
-            Add some delicious items to your cart first!
-          </p>
           <Link
-            href="/menu"
+            href="/"
             className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
             Browse Menu
@@ -169,68 +152,50 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          Complete Your Order
+        </h1>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Order Items */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-4">Order Items</h2>
-
             <div className="space-y-4">
               {cart.map((item, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-4 p-4 border rounded-lg"
                 >
-                  <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                    {item.productDetails.image ? (
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                    {item.image ? (
                       <img
-                        src={item.productDetails.image}
-                        alt={item.productDetails.name}
-                        className="w-full h-full object-cover rounded-lg"
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
                       />
                     ) : (
                       <span className="text-2xl">🍽️</span>
                     )}
                   </div>
-
                   <div className="flex-1">
-                    <h3 className="font-semibold">
-                      {item.productDetails.name}
-                    </h3>
-                    <p className="text-gray-600">
-                      ${item.price.toFixed(2)} each
-                    </p>
-                    <input
-                      type="text"
-                      placeholder="Special instructions (optional)"
-                      value={item.specialInstructions}
-                      onChange={(e) => {
-                        const newCart = [...cart];
-                        newCart[index].specialInstructions = e.target.value;
-                        setCart(newCart);
-                        localStorage.setItem("cart", JSON.stringify(newCart));
-                      }}
-                      className="mt-2 w-full text-sm border rounded px-2 py-1"
-                    />
+                    <h3 className="font-semibold">{item.name}</h3>
+                    <p className="text-gray-600">${item.price.toFixed(2)}</p>
                   </div>
-
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => updateQuantity(index, -1)}
-                      className="w-8 h-8 rounded-full border hover:bg-gray-100"
+                      className="w-8 h-8 rounded-full border hover:bg-gray-100 flex items-center justify-center"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="w-8 text-center">{item.quantity}</span>
+                    <span className="w-4 text-center">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(index, 1)}
-                      className="w-8 h-8 rounded-full border hover:bg-gray-100"
+                      className="w-8 h-8 rounded-full border hover:bg-gray-100 flex items-center justify-center"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>
-
                   <button
                     onClick={() => removeFromCart(index)}
                     className="text-red-500 hover:text-red-700"
@@ -240,39 +205,31 @@ export default function CheckoutPage() {
                 </div>
               ))}
             </div>
-
-            <div className="mt-6 pt-6 border-t">
-              <div className="flex justify-between items-center">
-                <span className="text-xl font-semibold">Total:</span>
-                <span className="text-2xl font-bold text-blue-600">
-                  ${calculateTotal().toFixed(2)}
-                </span>
-              </div>
+            <div className="mt-6 pt-6 border-t flex justify-between items-center">
+              <span className="text-xl font-semibold">Total:</span>
+              <span className="text-2xl font-bold text-blue-600">
+                ${calculateTotal().toFixed(2)}
+              </span>
             </div>
           </div>
 
-          {/* Delivery Information */}
+          {/* Table & Delivery Info */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
-
+            <h2 className="text-xl font-semibold mb-4">Service Details</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* TABLE NUMBER SECTION - Integrated from your code */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  <MapPin className="w-4 h-4 inline mr-1" />
-                  Delivery Address
+                <label className="block text-sm font-bold text-gray-900 mb-1">
+                  <Utensils className="w-4 h-4 inline mr-1 text-blue-600" />
+                  Table Number (on your QR stand)
                 </label>
-                <textarea
+                <input
+                  type="text"
                   required
-                  value={orderForm.deliveryAddress}
-                  onChange={(e) =>
-                    setOrderForm({
-                      ...orderForm,
-                      deliveryAddress: e.target.value,
-                    })
-                  }
-                  className="w-full border rounded-lg px-3 py-2"
-                  rows={3}
-                  placeholder="Enter your delivery address"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  placeholder="e.g. Table 5"
+                  value={tableNumber}
+                  onChange={(e) => setTableNumber(e.target.value)}
                 />
               </div>
 
@@ -292,7 +249,7 @@ export default function CheckoutPage() {
                     })
                   }
                   className="w-full border rounded-lg px-3 py-2"
-                  placeholder="Enter your phone number"
+                  placeholder="For order updates"
                 />
               </div>
 
@@ -307,7 +264,7 @@ export default function CheckoutPage() {
                   }
                   className="w-full border rounded-lg px-3 py-2"
                   rows={2}
-                  placeholder="Any special requests?"
+                  placeholder="Allergies or special requests?"
                 />
               </div>
 
@@ -326,29 +283,19 @@ export default function CheckoutPage() {
                   }
                   className="w-full border rounded-lg px-3 py-2"
                 >
-                  <option value="CASH">Cash on Delivery</option>
-                  <option value="CARD">Card</option>
-                  <option value="ONLINE">Online Payment</option>
+                  <option value="CASH">Pay at Counter / Cash</option>
+                  <option value="CARD">Credit/Debit Card</option>
                 </select>
-              </div>
-
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="flex items-center gap-2 text-blue-800">
-                  <Clock className="w-5 h-5" />
-                  <span className="font-medium">
-                    Estimated Delivery: 45 minutes
-                  </span>
-                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
+                className="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-700 transition-colors shadow-lg shadow-green-100 disabled:opacity-50"
               >
                 {loading
-                  ? "Placing Order..."
-                  : `Place Order - $${calculateTotal().toFixed(2)}`}
+                  ? "Sending to Kitchen..."
+                  : `Send to Kitchen - $${calculateTotal().toFixed(2)}`}
               </button>
             </form>
           </div>
