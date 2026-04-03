@@ -15,8 +15,8 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
       <div className="bg-white rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-semibold">New Message</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+          <h2 className="text-xl text-gray-900 font-semibold">New Message</h2>
+          <button onClick={onClose} className="p-1 text-gray-700 hover:bg-gray-100 rounded">
             <X size={20} />
           </button>
         </div>
@@ -28,7 +28,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
               <input
                 type="text"
                 placeholder="Recipients"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border text-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -36,7 +36,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
               <input
                 type="text"
                 placeholder="Subject"
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-gray-600 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -44,7 +44,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
               <textarea
                 placeholder="Compose your message..."
                 rows={12}
-                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border text-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
           </div>
@@ -52,7 +52,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
 
         {/* Footer */}
         <div className="flex items-center justify-between p-4 border-t">
-          <button className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded">
+          <button className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded">
             <Paperclip size={18} />
             Attach
           </button>
@@ -60,7 +60,7 @@ export default function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 border rounded hover:bg-gray-50"
+              className="px-4 py-2 border text-gray-600 rounded hover:bg-gray-50"
             >
               Cancel
             </button>

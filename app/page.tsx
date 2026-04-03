@@ -18,16 +18,16 @@ export default function Home() {
             </p>
             <div className="flex gap-4 justify-center">
               <Link
-                href="/menu"
-                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-              >
-                Order Now
-              </Link>
-              <Link
                 href="/register"
                 className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
               >
                 Register
+              </Link>
+              <Link
+                href="/login"
+                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
+                Login
               </Link>
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function Home() {
       </section>
 
       {/* Order Deadline Warning */}
-      <section className="bg-yellow-50 border-t-4 border-yellow-400 py-8">
+      {/* <section className="bg-yellow-50 border-t-4 border-yellow-400 py-8">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-xl font-bold text-yellow-800 mb-2">
             Order Deadline Reminder
@@ -182,9 +182,9 @@ export default function Home() {
             availability
           </p>
         </div>
-      </section>
+      </section> */}
 
-      {/* Call to Action */}
+      {/* Call to Action
       <section className="bg-blue-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-4">Ready to Order?</h2>
@@ -199,7 +199,7 @@ export default function Home() {
             View Menu
           </Link>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
