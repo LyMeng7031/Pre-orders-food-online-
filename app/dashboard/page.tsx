@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Plus,
   Package,
@@ -13,8 +13,16 @@ import {
   TrendingUp,
   QrCode,
   Calendar,
+  DollarSign,
+  ShoppingCart,
+  Clock,
+  AlertCircle,
+  MessageCircle,
 } from "lucide-react";
-import NotificationCenter from "@/components/NotificationCenter";
+import Button, { Input } from "@/components/ui/FormField";
+import { Skeleton } from "@/components/ui/Skeleton";
+import ChatButton from "@/components/ChatButton";
+import BookingCalendar from "@/components/BookingCalendar";
 
 interface User {
   _id: string;
@@ -22,11 +30,26 @@ interface User {
   email: string;
   role: string;
   profileImage?: string;
+  restaurantName?: string;
+}
+
+interface DashboardStats {
+  totalProducts: number;
+  totalOrders: number;
+  totalRevenue: number;
+  totalCustomers: number;
+  pendingOrders: number;
+  todayOrders: number;
+  thisMonthRevenue: number;
+  activeProducts: number;
 }
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -51,8 +74,54 @@ export default function DashboardPage() {
     }
 
     setUser(parsedUser);
-    setLoading(false);
+    fetchDashboardStats(token);
   }, [router]);
+
+  const fetchDashboardStats = async (token: string) => {
+    try {
+      setError(null);
+
+      // Fetch dashboard statistics
+      const statsResponse = await fetch("/api/dashboard/stats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setStats(statsData);
+      } else {
+        console.error("Failed to fetch stats");
+        // Set default values if API fails
+        setStats({
+          totalProducts: 0,
+          totalOrders: 0,
+          totalRevenue: 0,
+          totalCustomers: 0,
+          pendingOrders: 0,
+          todayOrders: 0,
+          thisMonthRevenue: 0,
+          activeProducts: 0,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      setError("Failed to load dashboard data");
+      setStats({
+        totalProducts: 0,
+        totalOrders: 0,
+        totalRevenue: 0,
+        totalCustomers: 0,
+        pendingOrders: 0,
+        todayOrders: 0,
+        thisMonthRevenue: 0,
+        activeProducts: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -71,6 +140,27 @@ export default function DashboardPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Dashboard Error
+          </h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Button
+            onClick={() =>
+              fetchDashboardStats(localStorage.getItem("token") || "")
+            }
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -81,13 +171,24 @@ export default function DashboardPage() {
               <Store className="w-8 h-8 text-blue-600" />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Owner Dashboard
+                  {user?.restaurantName || "Restaurant"} Dashboard
                 </h1>
                 <p className="text-gray-600">Welcome back, {user?.name}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <NotificationCenter />
+              <Link
+                href="/chat"
+                className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <MessageCircle className="w-5 h-5" />
+                {unreadMessages > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {unreadMessages}
+                  </span>
+                )}
+              </Link>
+
               <div className="flex items-center gap-2">
                 {user?.profileImage ? (
                   <img
@@ -122,34 +223,46 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Total Products</p>
-                <p className="text-2xl font-bold text-gray-900">12</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats?.totalProducts || 0}
+                </p>
               </div>
               <Package className="w-8 h-8 text-blue-600" />
             </div>
           </div>
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Total Orders</p>
-                <p className="text-2xl font-bold text-gray-900">48</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats?.totalOrders || 0}
+                </p>
               </div>
-              <TrendingUp className="w-8 h-8 text-green-600" />
+              <ShoppingCart className="w-8 h-8 text-green-600" />
             </div>
           </div>
+
+          {/* <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Total Revenue</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  $
+                  {stats?.totalRevenue ? stats.totalRevenue.toFixed(2) : "0.00"}
+                </p>
+              </div>
+              <DollarSign className="w-8 h-8 text-purple-600" />
+            </div>
+          </div> */}
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">$1,234</p>
-              </div>
-              <Users className="w-8 h-8 text-purple-600" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Customers</p>
-                <p className="text-2xl font-bold text-gray-900">156</p>
+                <p className="text-gray-600 text-sm">Total Customers</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats?.totalCustomers || 0}
+                </p>
               </div>
               <Users className="w-8 h-8 text-orange-600" />
             </div>
@@ -157,45 +270,47 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <Link
-            href="/owner/deadline-orders"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                <Calendar className="w-6 h-6 text-red-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Deadline Orders
-                </h3>
-                <p className="text-gray-600 text-sm">Manage scheduled orders</p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/owner/orders"
+            href="/dashboard/orders"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                <Package className="w-6 h-6 text-blue-600" />
+                <Calendar className="w-6 h-6 text-blue-600" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Regular Orders
+                  Manage Orders
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  View and manage customer orders
+                  {stats?.pendingOrders || 0} pending orders
                 </p>
               </div>
             </div>
           </Link>
 
           <Link
-            href="/owner/profile"
+            href="/manage-products"
+            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                <Package className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Manage Products
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  {stats?.activeProducts || 0} active products
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/restaurant-profile"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
           >
             <div className="flex items-center gap-4">
@@ -207,7 +322,7 @@ export default function DashboardPage() {
                   Restaurant Profile
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Manage your restaurant information
+                  Manage restaurant information
                 </p>
               </div>
             </div>
@@ -226,123 +341,70 @@ export default function DashboardPage() {
                   QR Code & Share
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Generate QR code for your menu
+                  Generate QR code for menu
                 </p>
               </div>
             </div>
           </Link>
 
           <Link
-            href="/owner/products"
+            href="/chat"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                <Package className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                <MessageCircle className="w-6 h-6 text-indigo-600" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Manage Products
+                  Messages
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Add, edit, or remove products
+                  {unreadMessages > 0
+                    ? `${unreadMessages} unread`
+                    : "Chat with customers"}
                 </p>
               </div>
             </div>
           </Link>
+        </div>
 
-          <Link
-            href="/owner/products/new"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                <Plus className="w-6 h-6 text-green-600" />
+        {/* Recent Activity */}
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Booking Calendar */}
+          <BookingCalendar />
+
+          {/* Today's Summary */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Today's Summary
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Today's Orders</span>
+                <span className="font-semibold text-gray-900">
+                  {stats?.todayOrders || 0}
+                </span>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Add New Product
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Create a new product listing
-                </p>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">Pending Orders</span>
+                <span className="font-semibold text-yellow-600">
+                  {stats?.pendingOrders || 0}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">This Month Revenue</span>
+                <span className="font-semibold text-green-600">
+                  $
+                  {stats?.thisMonthRevenue
+                    ? stats.thisMonthRevenue.toFixed(2)
+                    : "0.00"}
+                </span>
               </div>
             </div>
-          </Link>
+          </div>
 
-          <Link
-            href="/owner/orders"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                <Package className="w-6 h-6 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  View Orders
-                </h3>
-                <p className="text-gray-600 text-sm">Manage customer orders</p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/owner/profile"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                <Settings className="w-6 h-6 text-orange-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Profile Settings
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Update your profile information
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/owner/analytics"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                <TrendingUp className="w-6 h-6 text-red-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Analytics
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  View sales and performance
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/menu"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                <Store className="w-6 h-6 text-gray-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  View Menu
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  See how customers see your menu
-                </p>
-              </div>
-            </div>
-          </Link>
+          {/* Quick Actions */}
         </div>
       </div>
     </div>

@@ -86,6 +86,8 @@ model OrderItem {
   price Float
   specialInstructions String?
   orderId String @map("order") @db.ObjectId
+  
+  order Order @relation(fields: [orderId], references: [id])
 
   @@map("orderitems")
 }
@@ -125,6 +127,8 @@ model DeadlineOrderItem {
   price Float
   specialInstructions String?
   orderId String @map("order") @db.ObjectId
+  
+  deadlineOrder DeadlineOrder @relation(fields: [orderId], references: [id])
 
   @@map("deadlineorderitems")
 }
@@ -175,6 +179,13 @@ model Notification {
   isRead Boolean @default(false)
   readAt DateTime?
   
+  // Scheduling fields for deadline notifications
+  scheduledFor DateTime?
+  isScheduled Boolean @default(false)
+  isSent Boolean @default(false)
+  sentAt DateTime?
+  deliveryMethod NotificationDeliveryMethod @default(IN_APP)
+  
   metadata Json?
   
   createdAt DateTime @default(now())
@@ -220,4 +231,11 @@ enum NotificationPriority {
   MEDIUM
   HIGH
   URGENT
+}
+
+enum NotificationDeliveryMethod {
+  IN_APP
+  EMAIL
+  PUSH
+  SMS
 }

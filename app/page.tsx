@@ -18,16 +18,16 @@ export default function Home() {
             </p>
             <div className="flex gap-4 justify-center">
               <Link
-                href="/menu"
-                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-              >
-                Order Now
-              </Link>
-              <Link
                 href="/register"
                 className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
               >
                 Register
+              </Link>
+              <Link
+                href="/login"
+                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
+                Login
               </Link>
             </div>
           </div>

@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation"; // Added for redirect
+import {
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  ArrowLeft,
+  LogIn,
+} from "lucide-react";
 
 interface CartItem {
   _id: string;
@@ -17,13 +25,20 @@ interface CartItem {
   ingredients: string[];
   allergens: string[];
   quantity: number;
+  ownerId?: string; // Added to track which restaurant to return to
 }
 
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Added for auth check
+  const router = useRouter(); // Added for navigation
 
   useEffect(() => {
+    // Check authentication status
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+
     // Load cart from localStorage
     const savedCart = localStorage.getItem("foodCart");
     if (savedCart) {
@@ -38,6 +53,10 @@ export default function CartPage() {
       localStorage.setItem("foodCart", JSON.stringify(cart));
     }
   }, [cart, loading]);
+
+  // Determine the back link based on the items in the cart
+  const restaurantId = cart.length > 0 ? cart[0].ownerId : null;
+  const backLink = restaurantId ? `/owner/${restaurantId}` : "/menu";
 
   const updateQuantity = (id: string, change: number) => {
     setCart((prevCart) =>
@@ -61,6 +80,16 @@ export default function CartPage() {
     return cart.reduce((total, item) => total + item.quantity, 0);
   };
 
+  // Added handler for the checkout button
+  const handleCheckout = () => {
+    if (!isLoggedIn) {
+      // Send to login but remember to come back to cart
+      router.push("/login?redirect=/cart");
+    } else {
+      router.push("/checkout");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -80,7 +109,7 @@ export default function CartPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
-                href="/menu"
+                href={backLink} // Updated to use dynamic backLink
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -94,7 +123,7 @@ export default function CartPage() {
               </div>
             </div>
             <Link
-              href="/menu"
+              href={backLink} // Updated to use dynamic backLink
               className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
             >
               <ShoppingCart className="w-5 h-5" />
@@ -116,7 +145,7 @@ export default function CartPage() {
               Add some delicious items from our menu to get started
             </p>
             <Link
-              href="/menu"
+              href="/"
               className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
             >
               Browse Menu
@@ -126,14 +155,22 @@ export default function CartPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cart.map((item) => (
+              {cart.map((item, index) => (
                 <div
-                  key={item._id}
+                  key={`${item._id}-${index}`}
                   className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
-                      <span className="text-gray-400 text-3xl">🍽️</span>
+                    <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-gray-400 text-3xl">🍽️</span>
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
@@ -221,16 +258,22 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <Link
-                  href="/checkout"
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center"
+                {/* Updated Button to handle Login Guard */}
+                <button
+                  onClick={handleCheckout}
+                  className={`w-full py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
+                    isLoggedIn
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-orange-500 text-white hover:bg-orange-600"
+                  }`}
                 >
-                  Proceed to Checkout
-                </Link>
+                  {!isLoggedIn && <LogIn className="w-5 h-5" />}
+                  {isLoggedIn ? "Proceed to Checkout" : "Login to Place Order"}
+                </button>
 
                 <div className="mt-4 text-center">
                   <Link
-                    href="/menu"
+                    href={backLink}
                     className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                   >
                     Continue Shopping

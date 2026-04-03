@@ -84,18 +84,34 @@ export default function CreateProfilePage() {
     setLoading(false);
   }, [router]);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = (e) => {
-        setImagePreview(e.target?.result as string);
-        setFormData({
-          ...formData,
-          restaurantImage: e.target?.result as string,
+      try {
+        const token = localStorage.getItem("token");
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "restaurant-profiles");
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
         });
-      };
-      reader.readAsDataURL(file);
+
+        if (response.ok) {
+          const data = await response.json();
+          setImagePreview(data.url);
+          setFormData({ ...formData, restaurantImage: data.url });
+        } else {
+          alert("Failed to upload image");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        alert("An error occurred while uploading your image");
+      }
     }
   };
 

@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
-  ArrowLeft,
   Users,
   Check,
   X,
@@ -14,6 +12,7 @@ import {
   LogOut,
   Settings,
   BarChart3,
+  Utensils,
 } from "lucide-react";
 
 interface Owner {
@@ -25,11 +24,17 @@ interface Owner {
   restaurantName?: string;
   restaurantDescription?: string;
   cuisine?: string;
-  isApproved: boolean;
   isActive: boolean;
-  createdAt: string;
+  isApproved: boolean;
   rejectionReason?: string;
+  createdAt: string;
 }
+
+const menuItems = [
+  { label: "Dashboard", icon: BarChart3, active: true },
+  { label: "Owners", icon: Users, active: false },
+  { label: "Settings", icon: Settings, active: false },
+];
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
@@ -39,11 +44,9 @@ export default function AdminDashboard() {
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [selectedOwner, setSelectedOwner] = useState<Owner | null>(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    // Check authentication and admin role
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
 
@@ -66,17 +69,11 @@ export default function AdminDashboard() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch("/api/admin/owners", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setOwners(data.owners);
-      } else {
-        console.error("Failed to fetch owners:", data.error);
       }
     } catch (error) {
       console.error("Error fetching owners:", error);
@@ -90,38 +87,25 @@ export default function AdminDashboard() {
       const token = localStorage.getItem("token");
       const response = await fetch(`/api/admin/owners/${ownerId}/approve`, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.ok) {
-        setOwners(
-          owners.map((owner) =>
-            owner._id === ownerId
-              ? {
-                  ...owner,
-                  isApproved: true,
-                  approvalDate: new Date().toISOString(),
-                }
-              : owner,
-          ),
+        setOwners((prev) =>
+          prev.map((owner) =>
+            owner._id === ownerId ? { ...owner, isApproved: true, rejectionReason: undefined } : owner
+          )
         );
-      } else {
-        const data = await response.json();
-        alert(data.error || "Failed to approve owner");
+        setShowDetails(false);
       }
     } catch (error) {
-      console.error("Error approving owner:", error);
-      alert("An error occurred while approving the owner");
+      alert("An error occurred during approval.");
     }
   };
 
   const handleReject = async (ownerId: string) => {
-    if (!rejectionReason.trim()) {
-      alert("Please provide a reason for rejection");
-      return;
-    }
+    const reason = prompt("Enter rejection reason:");
+    if (!reason) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -131,27 +115,20 @@ export default function AdminDashboard() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ rejectionReason }),
+        body: JSON.stringify({ rejectionReason: reason }),
       });
 
       if (response.ok) {
-        setOwners(
-          owners.map((owner) =>
-            owner._id === ownerId
-              ? { ...owner, isApproved: false, rejectionReason }
-              : owner,
-          ),
+        setOwners((prev) =>
+          prev.map((owner) =>
+            owner._id === ownerId ? { ...owner, isApproved: false, rejectionReason: reason } : owner
+          )
         );
-        setRejectionReason("");
         setShowDetails(false);
         setSelectedOwner(null);
-      } else {
-        const data = await response.json();
-        alert(data.error || "Failed to reject owner");
       }
     } catch (error) {
-      console.error("Error rejecting owner:", error);
-      alert("An error occurred while rejecting the owner");
+      alert("An error occurred during rejection.");
     }
   };
 
@@ -164,17 +141,13 @@ export default function AdminDashboard() {
   const filteredOwners = owners.filter((owner) => {
     const matchesSearch =
       owner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      owner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (owner.restaurantName &&
-        owner.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()));
+      owner.email.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       filterStatus === "ALL" ||
-      (filterStatus === "PENDING" && !owner.isApproved) ||
+      (filterStatus === "PENDING" && !owner.isApproved && !owner.rejectionReason) ||
       (filterStatus === "APPROVED" && owner.isApproved) ||
-      (filterStatus === "REJECTED" &&
-        !owner.isApproved &&
-        owner.rejectionReason);
+      (filterStatus === "REJECTED" && !!owner.rejectionReason);
 
     return matchesSearch && matchesStatus;
   });
@@ -182,216 +155,137 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading admin dashboard...</p>
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Admin Dashboard
-              </h1>
-              <p className="text-gray-600">Manage restaurant owner approvals</p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              Logout
-            </button>
+    <div className="flex min-h-screen bg-gray-50 font-sans">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white shadow-sm h-screen sticky top-0 flex flex-col border-r border-gray-200">
+        <div className="flex items-center gap-3 p-6 border-b border-gray-100">
+          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-md">
+            <Utensils size={20} />
           </div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">FoodAdmin</h1>
         </div>
-      </div>
+        <nav className="flex-1 p-4">
+          <ul className="space-y-1">
+            {menuItems.map((item) => (
+              <li
+                key={item.label}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all ${
+                  item.active ? "text-blue-600 bg-blue-50 font-semibold" : "text-gray-500 hover:bg-gray-50"
+                }`}
+              >
+                <item.icon size={18} />
+                <span className="text-sm">{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
 
-      {/* Stats */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid md:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Total Owners</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {owners.length}
-                </p>
-              </div>
-              <Users className="w-8 h-8 text-blue-600" />
-            </div>
+      {/* Main Content */}
+      <main className="flex-1">
+        <header className="bg-white border-b sticky top-0 z-10 px-8 py-5 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Owners Management</h1>
+            <p className="text-sm text-gray-400">Review and verify restaurant applications</p>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Pending Approval</p>
-                <p className="text-2xl font-bold text-orange-900">
-                  {
-                    owners.filter((o) => !o.isApproved && !o.rejectionReason)
-                      .length
-                  }
-                </p>
-              </div>
-              <Filter className="w-8 h-8 text-orange-600" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Approved</p>
-                <p className="text-2xl font-bold text-green-900">
-                  {owners.filter((o) => o.isApproved).length}
-                </p>
-              </div>
-              <Check className="w-8 h-8 text-green-600" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Rejected</p>
-                <p className="text-2xl font-bold text-red-900">
-                  {
-                    owners.filter((o) => !o.isApproved && o.rejectionReason)
-                      .length
-                  }
-                </p>
-              </div>
-              <X className="w-8 h-8 text-red-600" />
-            </div>
-          </div>
-        </div>
+          <button onClick={handleLogout} className="flex items-center gap-2 text-gray-400 hover:text-red-600 transition-colors py-2 px-4 rounded-lg hover:bg-red-50">
+            <LogOut size={18} />
+            <span className="text-sm font-medium">Logout</span>
+          </button>
+        </header>
 
-        {/* Search and Filter */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search by name, email, or restaurant..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="ALL">All Status</option>
-              <option value="PENDING">Pending Approval</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
-            </select>
+        <div className="p-8">
+          {/* Stats Bar */}
+          <div className="grid md:grid-cols-4 gap-6 mb-8">
+            <StatCard title="Total" value={owners.length} color="blue" />
+            <StatCard title="Pending" value={owners.filter(o => !o.isApproved && !o.rejectionReason).length} color="orange" />
+            <StatCard title="Approved" value={owners.filter(o => o.isApproved).length} color="green" />
+            <StatCard title="Rejected" value={owners.filter(o => !!o.rejectionReason).length} color="red" />
           </div>
-        </div>
 
-        {/* Owners Table */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-4 border-b bg-gray-50/30 flex gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  className="w-full pl-10 pr-4 py-2 border text-gray-600 border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                  placeholder="Search by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <select
+                className="border border-gray-200 text-gray-600 rounded-lg px-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="ALL">All Applications</option>
+                <option value="PENDING">Pending</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </div>
+
+            <table className="w-full text-left">
+              <thead className="bg-gray-50/50 text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Owner Information
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Restaurant
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Applied Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <th className="px-8 py-4">Owner Info</th>
+                  <th className="px-8 py-4">Restaurant</th>
+                  <th className="px-8 py-4">Status</th>
+                  <th className="px-8 py-4">Date</th>
+                  <th className="px-8 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-100">
                 {filteredOwners.map((owner) => (
-                  <tr key={owner._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {owner.name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {owner.email}
-                        </div>
-                        {owner.phone && (
-                          <div className="text-sm text-gray-500">
-                            {owner.phone}
-                          </div>
-                        )}
-                      </div>
+                  <tr key={owner._id} className="hover:bg-gray-50/80 transition-colors group">
+                    <td className="px-8 py-5">
+                      <div className="font-semibold text-gray-900 text-sm">{owner.name}</div>
+                      <div className="text-xs text-gray-400">{owner.email}</div>
+                      <div className="text-[10px] text-gray-400 mt-1">{owner.phone}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {owner.restaurantName || "Not specified"}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {owner.cuisine || "Not specified"}
-                        </div>
-                      </div>
+                    <td className="px-8 py-5">
+                      <div className="text-sm text-gray-600">{owner.restaurantName || "Not specified"}</div>
+                      <div className="text-xs text-gray-400 italic">{owner.cuisine || "Not specified"}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          owner.isApproved
-                            ? "bg-green-100 text-green-800"
-                            : owner.rejectionReason
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {owner.isApproved
-                          ? "Approved"
-                          : owner.rejectionReason
-                            ? "Rejected"
-                            : "Pending"}
+                    <td className="px-8 py-5">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                        owner.isApproved ? "bg-green-100 text-green-700" :
+                        owner.rejectionReason ? "bg-red-50 text-red-600 border border-red-100" : "bg-yellow-100 text-yellow-700"
+                      }`}>
+                        {owner.isApproved ? "Approved" : owner.rejectionReason ? "Rejected" : "Pending"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(owner.createdAt).toLocaleDateString()}
+                    <td className="px-8 py-5 text-sm text-gray-500">
+                       {new Date(owner.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedOwner(owner);
-                            setShowDetails(true);
-                          }}
-                          className="text-blue-600 hover:text-blue-900"
+                    <td className="px-8 py-5">
+                      <div className="flex justify-end gap-3">
+                        <button 
+                          onClick={() => { setSelectedOwner(owner); setShowDetails(true); }} 
+                          className="p-1.5 text-blue-500 hover:bg-blue-100 rounded-md transition-all shadow-sm border border-transparent hover:border-blue-200"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye size={16} />
                         </button>
                         {!owner.isApproved && !owner.rejectionReason && (
                           <>
-                            <button
-                              onClick={() => handleApprove(owner._id)}
-                              className="text-green-600 hover:text-green-900"
+                            <button 
+                              onClick={() => handleApprove(owner._id)} 
+                              className="p-1.5 text-green-500 hover:bg-green-100 rounded-md transition-all shadow-sm border border-transparent hover:border-green-200"
                             >
-                              <Check className="w-4 h-4" />
+                              <Check size={16} />
                             </button>
-                            <button
-                              onClick={() => {
-                                setSelectedOwner(owner);
-                                setShowDetails(true);
-                              }}
-                              className="text-red-600 hover:text-red-900"
+                            <button 
+                              onClick={() => handleReject(owner._id)} 
+                              className="p-1.5 text-red-500 hover:bg-red-100 rounded-md transition-all shadow-sm border border-transparent hover:border-red-200"
                             >
-                              <X className="w-4 h-4" />
+                              <X size={16} />
                             </button>
                           </>
                         )}
@@ -402,166 +296,121 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
-
-          {filteredOwners.length === 0 && (
-            <div className="text-center py-12">
-              <Users className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No owners found
-              </h3>
-              <p className="text-gray-500">
-                {searchTerm || filterStatus !== "ALL"
-                  ? "Try adjusting your search or filter criteria"
-                  : "No restaurant owners have registered yet"}
-              </p>
-            </div>
-          )}
         </div>
-      </div>
+      </main>
 
-      {/* Owner Details Modal */}
+      {/* Details Modal */}
       {showDetails && selectedOwner && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <h2 className="text-xl font-bold text-gray-900">
-                  Owner Details
-                </h2>
-                <button
-                  onClick={() => {
-                    setShowDetails(false);
-                    setSelectedOwner(null);
-                    setRejectionReason("");
-                  }}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-lg w-full p-8 shadow-2xl relative border border-gray-100">
+            <button 
+              onClick={() => setShowDetails(false)} 
+              className="absolute top-5 right-5 text-gray-300 hover:text-gray-600 transition-colors"
+            >
+              <X size={20} />
+            </button>
 
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Personal Information
-                  </h3>
-                  <div className="mt-2 space-y-2">
-                    <p>
-                      <strong>Name:</strong> {selectedOwner.name}
-                    </p>
-                    <p>
-                      <strong>Email:</strong> {selectedOwner.email}
-                    </p>
-                    <p>
-                      <strong>Phone:</strong>{" "}
-                      {selectedOwner.phone || "Not provided"}
-                    </p>
-                    <p>
-                      <strong>Address:</strong>{" "}
-                      {selectedOwner.address || "Not provided"}
-                    </p>
-                  </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-8 border-b pb-4">Owner Details</h2>
+
+            <div className="space-y-8">
+              <Section title="Personal Information">
+                <div className="grid gap-2">
+                  <DetailItem label="Name" value={selectedOwner.name} />
+                  <DetailItem label="Email" value={selectedOwner.email} />
+                  <DetailItem label="Phone" value={selectedOwner.phone || "Not provided"} />
+                  <DetailItem label="Address" value={selectedOwner.address || "Phnom Penh, Cambodia"} />
                 </div>
+              </Section>
 
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Restaurant Information
-                  </h3>
-                  <div className="mt-2 space-y-2">
-                    <p>
-                      <strong>Restaurant Name:</strong>{" "}
-                      {selectedOwner.restaurantName || "Not provided"}
-                    </p>
-                    <p>
-                      <strong>Cuisine:</strong>{" "}
-                      {selectedOwner.cuisine || "Not provided"}
-                    </p>
-                    <p>
-                      <strong>Description:</strong>{" "}
-                      {selectedOwner.restaurantDescription || "Not provided"}
-                    </p>
-                  </div>
+              <Section title="Restaurant Information">
+                <div className="grid gap-2">
+                  <DetailItem label="Restaurant Name" value={selectedOwner.restaurantName || "Not provided"} />
+                  <DetailItem label="Cuisine" value={selectedOwner.cuisine || "Not provided"} />
+                  <DetailItem label="Description" value={selectedOwner.restaurantDescription || "Not provided"} />
                 </div>
+              </Section>
 
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">
-                    Application Status
-                  </h3>
-                  <div className="mt-2 space-y-2">
-                    <p>
-                      <strong>Status:</strong>
-                      <span
-                        className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
-                          selectedOwner.isApproved
-                            ? "bg-green-100 text-green-800"
-                            : selectedOwner.rejectionReason
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {selectedOwner.isApproved
-                          ? "Approved"
-                          : selectedOwner.rejectionReason
-                            ? "Rejected"
-                            : "Pending"}
+              <Section title="Application Status">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[13px] font-bold text-gray-700">Status:</span>
+                    {selectedOwner.isApproved ? (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">
+                        Approved
                       </span>
-                    </p>
-                    <p>
-                      <strong>Applied Date:</strong>{" "}
-                      {new Date(selectedOwner.createdAt).toLocaleDateString()}
-                    </p>
-                    {selectedOwner.rejectionReason && (
-                      <p>
-                        <strong>Rejection Reason:</strong>{" "}
-                        {selectedOwner.rejectionReason}
-                      </p>
+                    ) : selectedOwner.rejectionReason ? (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-500 border border-red-100 uppercase">
+                        Rejected
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 uppercase">
+                        Pending
+                      </span>
                     )}
                   </div>
-                </div>
-
-                {!selectedOwner.isApproved &&
-                  !selectedOwner.rejectionReason && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500">
-                        Actions
-                      </h3>
-                      <div className="mt-4 flex gap-4">
-                        <button
-                          onClick={() => handleApprove(selectedOwner._id)}
-                          className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
-                        >
-                          <Check className="w-4 h-4 inline mr-2" />
-                          Approve Application
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (
-                              confirm(
-                                "Are you sure you want to reject this application? You'll need to provide a reason.",
-                              )
-                            ) {
-                              const reason = prompt(
-                                "Please provide a reason for rejection:",
-                              );
-                              if (reason) {
-                                setRejectionReason(reason);
-                                handleReject(selectedOwner._id);
-                              }
-                            }
-                          }}
-                          className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
-                        >
-                          <X className="w-4 h-4 inline mr-2" />
-                          Reject Application
-                        </button>
-                      </div>
-                    </div>
+                  <DetailItem label="Applied Date" value={new Date(selectedOwner.createdAt).toLocaleDateString()} />
+                  {selectedOwner.rejectionReason && (
+                    <DetailItem label="Rejection Reason" value={selectedOwner.rejectionReason} />
                   )}
-              </div>
+                </div>
+              </Section>
+
+              {!selectedOwner.isApproved && !selectedOwner.rejectionReason && (
+                <div className="flex gap-4 pt-6">
+                  <button 
+                    onClick={() => handleApprove(selectedOwner._id)} 
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold text-sm transition-all shadow-md active:scale-95"
+                  >
+                    Approve Application
+                  </button>
+                  <button 
+                    onClick={() => handleReject(selectedOwner._id)} 
+                    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-3 rounded-lg font-bold text-sm transition-all border border-red-100 active:scale-95"
+                  >
+                    Reject Application
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// UI Components
+function StatCard({ title, value, color }: { title: string; value: number; color: "blue" | "green" | "red" | "orange" }) {
+  const colors = {
+    blue: "text-blue-600 bg-blue-50",
+    green: "text-green-600 bg-green-50",
+    red: "text-red-600 bg-red-50",
+    orange: "text-orange-600 bg-orange-50"
+  };
+  return (
+    <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+      <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">{title}</span>
+      <span className={`text-2xl font-black px-3 py-1 rounded-lg ${colors[color]}`}>{value}</span>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3 className="text-gray-300 text-[10px] mb-3 uppercase tracking-[0.2em] font-black border-l-2 border-blue-500 pl-3">
+        {title}
+      </h3>
+      <div className="pl-4">{children}</div>
+    </div>
+  );
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="text-[13px]">
+      <span className="font-bold text-gray-700">{label}: </span>
+      <span className="text-gray-500">{value}</span>
     </div>
   );
 }
