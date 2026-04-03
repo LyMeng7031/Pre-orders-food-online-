@@ -21,6 +21,19 @@ export async function POST(req: Request) {
     return Response.json({ error: "Wrong password" });
   }
 
+  // Check if user is active
+  if (!user.isActive) {
+    return Response.json({ error: "Account is deactivated" });
+  }
+
+  // Check approval status for restaurant owners
+  if (user.role === "OWNER" && !user.isApproved) {
+    return Response.json({ 
+      error: "Your restaurant account is pending approval. Please wait for admin approval.",
+      needsApproval: true 
+    });
+  }
+
   const token = jwt.sign(
     { userId: user._id, role: user.role },
     process.env.JWT_SECRET!,

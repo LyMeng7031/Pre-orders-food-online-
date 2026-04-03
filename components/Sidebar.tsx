@@ -73,69 +73,6 @@ export default function Sidebar() {
 
         {/* Inbox Section */}
         <div className="border-t pt-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2">
-              <Inbox size={18} className="text-gray-600" />
-              Email
-            </h2>
-            <button className="text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-colors">
-              <Plus size={16} />
-            </button>
-          </div>
-
-          <ul className="space-y-2 mb-6">
-            {inboxItems.map((item) => (
-              <li
-                key={item.label}
-                className={`flex items-center justify-between px-3 py-2 rounded cursor-pointer transition-colors ${
-                  item.label === "Inbox"
-                    ? "bg-blue-50 text-blue-600 font-medium"
-                    : "hover:bg-gray-100 text-gray-700"
-                }`}
-                onClick={() => item.label === "Inbox" && router.push("/inbox")}
-              >
-                <div className="flex items-center gap-3">
-                  <item.icon
-                    size={16}
-                    className={
-                      item.label === "Inbox"
-                        ? "text-blue-600"
-                        : item.label === "Starred"
-                          ? "text-yellow-500"
-                          : item.label === "Important"
-                            ? "text-red-500"
-                            : "text-gray-500"
-                    }
-                  />
-                  <span>{item.label}</span>
-                </div>
-                {item.count && (
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
-                    {item.count}
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-
-          {/* Labels Section */}
-          <div className="border-t pt-4">
-            <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-900">
-              <Tag size={16} className="text-gray-600" />
-              Labels
-            </h3>
-            <ul className="space-y-2">
-              {labels.map((label) => (
-                <li
-                  key={label.label}
-                  className="flex items-center gap-3 px-3 py-2 rounded cursor-pointer hover:bg-gray-100 text-gray-700"
-                >
-                  <div className={`w-3 h-3 rounded-full ${label.color}`}></div>
-                  <span>{label.label}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
       </div>
     </div>

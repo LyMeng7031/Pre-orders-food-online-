@@ -65,7 +65,12 @@ export default function Login() {
           router.push("/customer");
         }
       } else {
-        setError(data.error || "Login failed");
+        // Handle special case for pending approval
+        if (data.needsApproval) {
+          setError("⏰ Your restaurant account is pending admin approval. You'll receive an email once approved.");
+        } else {
+          setError(data.error || "Login failed");
+        }
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
