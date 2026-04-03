@@ -14,8 +14,12 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Get the redirect path from the URL (e.g., /login?redirect=/cart)
+  const redirectPath = searchParams.get("redirect");
 
   useEffect(() => {
     const msg = searchParams.get("message");
@@ -56,13 +60,18 @@ export default function Login() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        // Redirect based on user role
-        if (data.user.role === "ADMIN") {
-          router.push("/admin");
-        } else if (data.user.role === "OWNER") {
-          router.push("/dashboard");
+        // Logic added: If there is a redirect path, go there first.
+        // Otherwise, use the original role-based redirect.
+        if (redirectPath) {
+          router.push(redirectPath);
         } else {
-          router.push("/customer");
+          if (data.user.role === "ADMIN") {
+            router.push("/admin");
+          } else if (data.user.role === "OWNER") {
+            router.push("/dashboard");
+          } else {
+            router.push("/customer");
+          }
         }
       } else {
         // Handle special case for pending approval
@@ -86,10 +95,15 @@ export default function Login() {
           <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
+          {redirectPath && (
+            <p className="mt-2 text-center text-sm font-medium text-orange-600 bg-orange-50 py-2 rounded-lg">
+              Please sign in to complete your order
+            </p>
+          )}
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{" "}
             <Link
-              href="/register"
+              href={`/register${redirectPath ? `?redirect=${redirectPath}` : ""}`}
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               create a new account
@@ -207,7 +221,7 @@ export default function Login() {
             <p className="text-xs text-gray-500">
               Don't have an account?{" "}
               <Link
-                href="/register"
+                href={`/register${redirectPath ? `?redirect=${redirectPath}` : ""}`}
                 className="text-blue-600 hover:text-blue-500 font-medium"
               >
                 Sign up now
