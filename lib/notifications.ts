@@ -178,7 +178,7 @@ export async function createNotificationFromTemplate(
 ) {
   const template = notificationTemplates[templateKey];
   const notificationData =
-    typeof template === "function" ? template(...args) : template;
+    typeof template === "function" ? (template as any)(...args) : template;
 
   return await createNotification({
     recipient,

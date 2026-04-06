@@ -5,13 +5,14 @@ import User from "@/models/User";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     await connectDB();
 
     // Check if restaurant owner exists
-    const restaurantOwner = await User.findById(params.id);
+    const restaurantOwner = await User.findById(id);
     if (!restaurantOwner || restaurantOwner.role !== "OWNER") {
       return NextResponse.json(
         { error: "Restaurant not found" },
@@ -21,7 +22,7 @@ export async function GET(
 
     // Fetch products for this restaurant owner
     const products = await Product.find({
-      owner: params.id,
+      owner: id,
       isAvailable: true,
     }).sort({ createdAt: -1 });
 

@@ -69,6 +69,9 @@ interface InputProps {
   disabled?: boolean;
   className?: string;
   icon?: LucideIcon;
+  step?: string;
+  min?: string;
+  onKeyPress?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 export function Input({
@@ -82,6 +85,9 @@ export function Input({
   disabled = false,
   className = "",
   icon: Icon,
+  step,
+  min,
+  onKeyPress,
 }: InputProps) {
   return (
     <div className={`space-y-1 ${className}`}>
@@ -104,6 +110,9 @@ export function Input({
           onChange={(e) => onChange?.(e.target.value)}
           required={required}
           disabled={disabled}
+          step={step}
+          min={min}
+          onKeyPress={onKeyPress}
           className={`w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
             Icon ? "pl-10" : ""
           } ${error ? "border-red-500 focus:ring-red-500" : ""} ${

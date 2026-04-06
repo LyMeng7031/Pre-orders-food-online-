@@ -104,7 +104,7 @@ export default function CreateProfilePage() {
         if (response.ok) {
           const data = await response.json();
           setImagePreview(data.url);
-          setFormData({ ...formData, restaurantImage: data.url });
+          setFormData((prev) => ({ ...prev, restaurantImage: data.url }));
         } else {
           alert("Failed to upload image");
         }

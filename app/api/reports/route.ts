@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
         deadlineTime: order.deadlineTime,
         bookingTime: order.bookingTime,
         preparationTime: order.preparationTime,
-        items: order.items.map((item) => ({
+        items: order.items.map((item: any) => ({
           productName: (item.product as any)?.name || "Unknown",
           quantity: item.quantity,
           price: item.price,
@@ -161,9 +161,7 @@ function analyzePeakHours(
     .slice(0, 5); // Top 5 peak hours
 }
 
-function analyzeTopProducts(
-  orders: any[],
-): Array<{
+function analyzeTopProducts(orders: any[]): Array<{
   productName: string;
   quantity: number;
   revenue: number;

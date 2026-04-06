@@ -1,30 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import Product from "@/models/Product";
+import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import mongoose from "mongoose";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> }, // FIXED: params is now a Promise
 ) {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || "");
+    // FIXED: You must 'await' the params to get the 'id'
+    const { id } = await params;
 
-    // Verify owner exists and is active
-    const owner = await User.findById(params.id);
-    if (!owner || owner.role !== "OWNER" || !owner.isActive) {
+    // Connect to your database
+    await connectDB();
+
+    // Find the owner by ID
+    const owner = await User.findById(id);
+
+    if (!owner || owner.role !== "OWNER") {
       return NextResponse.json({ error: "Owner not found" }, { status: 404 });
     }
 
-    // Get available products for this owner
-    const products = await Product.find({
-      owner: params.id,
-      isAvailable: true,
-    }).sort({ createdAt: -1 });
-
-    return NextResponse.json({ products });
+    return NextResponse.json({ owner });
   } catch (error) {
-    console.error("Error fetching owner products:", error);
+    console.error("Error fetching owner:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

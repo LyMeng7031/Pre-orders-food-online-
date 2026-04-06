@@ -65,12 +65,12 @@ const CATEGORIES = [
 ];
 
 const SPICY_LEVELS = [
-  { value: 0, label: "Not Spicy" },
-  { value: 1, label: "Mild" },
-  { value: 2, label: "Medium" },
-  { value: 3, label: "Hot" },
-  { value: 4, label: "Very Hot" },
-  { value: 5, label: "Extra Hot" },
+  { value: "0", label: "Not Spicy" },
+  { value: "1", label: "Mild" },
+  { value: "2", label: "Medium" },
+  { value: "3", label: "Hot" },
+  { value: "4", label: "Very Hot" },
+  { value: "5", label: "Extremely Hot" },
 ];
 
 // --- EXTRACTED FORM COMPONENT (Prevents focus loss) ---

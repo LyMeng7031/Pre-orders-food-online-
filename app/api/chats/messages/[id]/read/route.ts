@@ -44,8 +44,8 @@ export async function PUT(
     }
 
     return NextResponse.json({
+      success: true,
       message: "Message marked as read",
-      message: message,
     });
   } catch (error) {
     console.error("Error marking message as read:", error);

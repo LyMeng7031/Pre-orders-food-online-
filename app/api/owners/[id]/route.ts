@@ -4,12 +4,13 @@ import mongoose from "mongoose";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     await mongoose.connect(process.env.MONGODB_URI || "");
 
-    const owner = await User.findById(params.id).select("-password");
+    const owner = await User.findById(id).select("-password");
 
     if (!owner) {
       return NextResponse.json({ error: "Owner not found" }, { status: 404 });

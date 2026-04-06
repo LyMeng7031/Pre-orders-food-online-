@@ -600,7 +600,6 @@ export default function Chat({
 
                 <div className="flex-1">
                   <Input
-                    ref={inputRef}
                     placeholder="Type a message..."
                     value={newMessage}
                     onChange={setNewMessage}
