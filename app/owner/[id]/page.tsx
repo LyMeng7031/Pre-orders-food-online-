@@ -123,17 +123,22 @@ export default function OwnerProfilePage() {
     "APPETIZERS",
   ];
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProducts =
+    products?.filter((product) => {
+      const productName = product?.name || "";
+      const productDescription = product?.description || "";
+      const searchTermLower = searchTerm.toLowerCase();
 
-    const matchesCategory =
-      selectedCategory === "ALL" ||
-      product.category?.toUpperCase() === selectedCategory;
+      const matchesSearch =
+        productName.toLowerCase().includes(searchTermLower) ||
+        productDescription.toLowerCase().includes(searchTermLower);
 
-    return matchesSearch && matchesCategory && product.isAvailable;
-  });
+      const matchesCategory =
+        selectedCategory === "ALL" ||
+        product.category?.toUpperCase() === selectedCategory;
+
+      return matchesSearch && matchesCategory && product.isAvailable;
+    }) || [];
 
   if (loading) {
     return (
@@ -259,7 +264,7 @@ export default function OwnerProfilePage() {
               placeholder="Search dishes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white border-none rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-12 pr-4 py-3 bg-white text-black border-none rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">

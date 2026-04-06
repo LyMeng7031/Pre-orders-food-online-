@@ -159,7 +159,9 @@ export default function CheckoutPage() {
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Order Items */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Order Items</h2>
+            <h2 className="text-xl font-semibold mb-4 text-black">
+              Order Items
+            </h2>
             <div className="space-y-4">
               {cart.map((item, index) => (
                 <div
@@ -174,24 +176,26 @@ export default function CheckoutPage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-2xl">🍽️</span>
+                      <span className="text-2xl ">🍽️</span>
                     )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                    <h3 className="font-semibold text-black">{item.name}</h3>
+                    <p className="text-gray-600 ">${item.price.toFixed(2)}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => updateQuantity(index, -1)}
-                      className="w-8 h-8 rounded-full border hover:bg-gray-100 flex items-center justify-center"
+                      className="w-8 h-8 rounded-full border hover:bg-gray-100 flex items-center justify-center text-black"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="w-4 text-center">{item.quantity}</span>
+                    <span className="w-4 text-center text-black">
+                      {item.quantity}
+                    </span>
                     <button
                       onClick={() => updateQuantity(index, 1)}
-                      className="w-8 h-8 rounded-full border hover:bg-gray-100 flex items-center justify-center"
+                      className="w-8 h-8 rounded-full border hover:bg-gray-100 flex items-center justify-center text-black"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -206,7 +210,7 @@ export default function CheckoutPage() {
               ))}
             </div>
             <div className="mt-6 pt-6 border-t flex justify-between items-center">
-              <span className="text-xl font-semibold">Total:</span>
+              <span className="text-xl font-semibold text-black">Total:</span>
               <span className="text-2xl font-bold text-blue-600">
                 ${calculateTotal().toFixed(2)}
               </span>
@@ -214,7 +218,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Table & Delivery Info */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-lg shadow-md p-6 text-black">
             <h2 className="text-xl font-semibold mb-4">Service Details</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* TABLE NUMBER SECTION - Integrated from your code */}

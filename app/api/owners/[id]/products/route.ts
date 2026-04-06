@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
+import Product from "@/models/Product";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }, // FIXED: params is now a Promise
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    // FIXED: You must 'await' the params to get the 'id'
     const { id } = await params;
 
     // Connect to your database
@@ -20,9 +20,18 @@ export async function GET(
       return NextResponse.json({ error: "Owner not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ owner });
+    // Fetch products for this owner
+    const products = await Product.find({
+      owner: id,
+      isAvailable: true,
+    }).sort({ createdAt: -1 });
+
+    return NextResponse.json({
+      owner,
+      products,
+    });
   } catch (error) {
-    console.error("Error fetching owner:", error);
+    console.error("Error fetching owner products:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
