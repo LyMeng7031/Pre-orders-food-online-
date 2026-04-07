@@ -1,27 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
-import Restaurant from "@/models/Restaurant";
+import User from "@/models/User";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     await connectDB();
 
-    // Check if restaurant exists
-    const restaurant = await Restaurant.findById(params.id);
-    if (!restaurant) {
+    // Check if restaurant owner exists
+    const restaurantOwner = await User.findById(id);
+    if (!restaurantOwner || restaurantOwner.role !== "OWNER") {
       return NextResponse.json(
         { error: "Restaurant not found" },
         { status: 404 },
       );
     }
 
-    // Fetch products for this restaurant
+    // Fetch products for this restaurant owner
     const products = await Product.find({
-      restaurant: params.id,
+      owner: id,
       isAvailable: true,
     }).sort({ createdAt: -1 });
 
@@ -41,10 +42,10 @@ export async function GET(
         allergens: product.allergens,
       })),
       restaurant: {
-        _id: restaurant._id,
-        name: restaurant.name,
-        description: restaurant.description,
-        image: restaurant.image,
+        _id: restaurantOwner._id,
+        name: restaurantOwner.restaurantName || restaurantOwner.name,
+        description: restaurantOwner.restaurantDescription || "",
+        image: restaurantOwner.restaurantImage || "",
       },
     });
   } catch (error) {

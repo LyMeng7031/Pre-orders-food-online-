@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get("id");
+    const type = searchParams.get("type") || "basic";
 
     if (!ownerId) {
       return NextResponse.json(

@@ -32,7 +32,10 @@ export async function POST(request: NextRequest) {
     } catch (dbError) {
       console.error("❌ Database connection error:", dbError);
       return NextResponse.json(
-        { error: "Database connection failed", details: dbError.message },
+        {
+          error: "Database connection failed",
+          details: dbError instanceof Error ? dbError.message : "Unknown error",
+        },
         { status: 500 },
       );
     }
@@ -59,7 +62,11 @@ export async function POST(request: NextRequest) {
     } catch (parseError) {
       console.error("❌ JSON parsing error:", parseError);
       return NextResponse.json(
-        { error: "Invalid JSON in request body", details: parseError.message },
+        {
+          error: "Invalid JSON in request body",
+          details:
+            parseError instanceof Error ? parseError.message : "Invalid JSON",
+        },
         { status: 400 },
       );
     }

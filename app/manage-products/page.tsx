@@ -52,25 +52,20 @@ interface Pagination {
 }
 
 const CATEGORIES = [
-  { value: "appetizers", label: "Appetizers" },
-  { value: "main-course", label: "Main Course" },
-  { value: "desserts", label: "Desserts" },
-  { value: "beverages", label: "Beverages" },
-  { value: "fast-food", label: "Fast Food" },
-  { value: "khmer-food", label: "Khmer Food" },
-  { value: "chinese", label: "Chinese" },
-  { value: "italian", label: "Italian" },
-  { value: "japanese", label: "Japanese" },
-  { value: "thai", label: "Thai" },
+  { value: "MEALS", label: "MEALS" },
+  { value: "DRINKS", label: "DRINKS" },
+  { value: "SNACKS", label: "SNACKS" },
+  { value: "DESSERTS", label: "DESSERTS" },
+  { value: "APPETIZERS", label: "APPETIZERS" },
 ];
 
 const SPICY_LEVELS = [
-  { value: 0, label: "Not Spicy" },
-  { value: 1, label: "Mild" },
-  { value: 2, label: "Medium" },
-  { value: 3, label: "Hot" },
-  { value: 4, label: "Very Hot" },
-  { value: 5, label: "Extra Hot" },
+  { value: "0", label: "Not Spicy" },
+  { value: "1", label: "Mild" },
+  { value: "2", label: "Medium" },
+  { value: "3", label: "Hot" },
+  { value: "4", label: "Very Hot" },
+  { value: "5", label: "Extremely Hot" },
 ];
 
 // --- EXTRACTED FORM COMPONENT (Prevents focus loss) ---

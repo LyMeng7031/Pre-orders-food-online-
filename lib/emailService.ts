@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 interface EmailOptions {
   to: string;
@@ -12,9 +12,9 @@ export class EmailService {
 
   constructor() {
     // Initialize email transporter
-    this.transporter = nodemailer.createTransporter({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
+    this.transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.SMTP_PORT || "587"),
       secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.SMTP_USER,
@@ -36,7 +36,7 @@ export class EmailService {
         html: options.html,
       });
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
       throw error;
     }
   }
@@ -49,10 +49,10 @@ export class EmailService {
     customerName: string,
     deadlineTime: Date,
     orderTotal: number,
-    customerPhone: string
+    customerPhone: string,
   ): Promise<void> {
     const subject = `Order Deadline Alert: ${customerName}`;
-    
+
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
@@ -111,10 +111,10 @@ export class EmailService {
     to: string,
     customerName: string,
     orderDetails: any,
-    totalAmount: number
+    totalAmount: number,
   ): Promise<void> {
     const subject = `Order Confirmation - ${orderDetails.restaurantName}`;
-    
+
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background-color: #28a745; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
@@ -127,12 +127,16 @@ export class EmailService {
           <div style="background-color: white; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
             <h3 style="color: #333; margin-bottom: 15px;">Order Details</h3>
             
-            ${orderDetails.items.map((item: any, index: number) => `
-              <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; ${index < orderDetails.items.length - 1 ? 'border-bottom: 1px solid #eee;' : ''}">
+            ${orderDetails.items
+              .map(
+                (item: any, index: number) => `
+              <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; ${index < orderDetails.items.length - 1 ? "border-bottom: 1px solid #eee;" : ""}">
                 <span>${item.quantity}x ${item.name}</span>
                 <span>$${(item.price * item.quantity).toFixed(2)}</span>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
             
             <div style="display: flex; justify-content: space-between; margin-top: 15px; font-weight: bold; font-size: 18px; border-top: 2px solid #333; padding-top: 10px;">
               <span>Total:</span>
@@ -142,7 +146,7 @@ export class EmailService {
           
           <div style="background-color: #d1ecf1; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
             <p style="color: #0c5460; margin: 0;">
-              <strong>Pickup Information:</strong> ${orderDetails.pickupInfo || 'Will be provided shortly'}
+              <strong>Pickup Information:</strong> ${orderDetails.pickupInfo || "Will be provided shortly"}
             </p>
           </div>
           
@@ -160,11 +164,11 @@ export class EmailService {
       Thank you for your order, ${customerName}!
       
       Order Details:
-      ${orderDetails.items.map((item: any) => `${item.quantity}x ${item.name} - $${(item.price * item.quantity).toFixed(2)}`).join('\n')}
+      ${orderDetails.items.map((item: any) => `${item.quantity}x ${item.name} - $${(item.price * item.quantity).toFixed(2)}`).join("\n")}
       
       Total: $${totalAmount.toFixed(2)}
       
-      Pickup Information: ${orderDetails.pickupInfo || 'Will be provided shortly'}
+      Pickup Information: ${orderDetails.pickupInfo || "Will be provided shortly"}
       
       We'll notify you when your order is ready for pickup.
       Thank you for choosing ${orderDetails.restaurantName}!
@@ -184,10 +188,10 @@ export class EmailService {
   async sendOrderReadyEmail(
     to: string,
     customerName: string,
-    orderDetails: any
+    orderDetails: any,
   ): Promise<void> {
     const subject = `Your Order is Ready! - ${orderDetails.restaurantName}`;
-    
+
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background-color: #28a745; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
@@ -253,7 +257,7 @@ export class EmailService {
       await this.transporter.verify();
       return true;
     } catch (error) {
-      console.error('Email configuration test failed:', error);
+      console.error("Email configuration test failed:", error);
       return false;
     }
   }

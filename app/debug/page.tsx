@@ -38,10 +38,10 @@ export default function DebugPage() {
 
       const data = await response.json();
       console.log("Admin API Response:", data);
-      setDebugInfo((prev) => ({ ...prev, adminApiResponse: data }));
+      setDebugInfo((prev: any) => ({ ...prev, adminApiResponse: data }));
     } catch (error) {
       console.error("Admin API Error:", error);
-      setDebugInfo((prev) => ({ ...prev, adminApiError: error }));
+      setDebugInfo((prev: any) => ({ ...prev, adminApiError: error }));
     }
   };
 

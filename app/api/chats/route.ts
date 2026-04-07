@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
 
     // Send notification to recipient
     await createNotificationFromTemplate(
-      "newMessage",
+      "newChatMessage",
       recipientId,
       decoded.userId,
       message._id.toString(),
@@ -186,8 +186,9 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({
+      success: true,
       message: "Message sent successfully",
-      message: message,
+      data: message,
     });
   } catch (error) {
     console.error("Error sending message:", error);

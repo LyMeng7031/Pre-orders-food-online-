@@ -47,7 +47,7 @@ export default function OrderConfirmationPage() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const orderId = router.query.id || searchParams.get("id");
+    const orderId = searchParams.get("id");
     const success = searchParams.get("success");
 
     if (!orderId) {

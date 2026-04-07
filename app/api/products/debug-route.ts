@@ -121,7 +121,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Failed to create product",
-          details: createError.message,
+          details:
+            createError instanceof Error
+              ? createError.message
+              : "Unknown error",
         },
         { status: 500 },
       );
@@ -131,7 +134,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: "Internal server error",
-        details: error.message,
+        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

@@ -43,6 +43,7 @@
 //       await message.save();
 //     }
 
+<<<<<<< HEAD
 //     return NextResponse.json({
 //       message: "Message marked as read",
 //       message: message,
@@ -55,3 +56,17 @@
 //     );
 //   }
 // }
+=======
+    return NextResponse.json({
+      success: true,
+      message: "Message marked as read",
+    });
+  } catch (error) {
+    console.error("Error marking message as read:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+>>>>>>> main
