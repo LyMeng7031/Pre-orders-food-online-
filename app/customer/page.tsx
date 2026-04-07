@@ -106,7 +106,7 @@ export default function CustomerPage() {
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Link
+          {/* <Link
             href="/chat"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
           >
@@ -121,7 +121,7 @@ export default function CustomerPage() {
                 <p className="text-gray-600 text-sm">Chat with restaurants</p>
               </div>
             </div>
-          </Link>
+          </Link> */}
 
           <Link
             href="/deadline-booking"

@@ -270,7 +270,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid md:grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
           <Link
             href="/dashboard/orders"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
@@ -342,27 +342,6 @@ export default function DashboardPage() {
                 </h3>
                 <p className="text-gray-600 text-sm">
                   Generate QR code for menu
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/chat"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
-                <MessageCircle className="w-6 h-6 text-indigo-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Messages
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  {unreadMessages > 0
-                    ? `${unreadMessages} unread`
-                    : "Chat with customers"}
                 </p>
               </div>
             </div>
