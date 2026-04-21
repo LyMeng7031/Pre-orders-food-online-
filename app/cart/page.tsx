@@ -102,7 +102,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-black">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4">
@@ -258,7 +258,7 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                {/* Updated Button to handle Login Guard */}
+                {/* Login Guard Logic for Button */}
                 <button
                   onClick={handleCheckout}
                   className={`w-full py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
-function LoginContent() {
+export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -74,14 +74,7 @@ function LoginContent() {
           }
         }
       } else {
-        // Handle special case for pending approval
-        if (data.needsApproval) {
-          setError(
-            "⏰ Your restaurant account is pending admin approval. You'll receive an email once approved.",
-          );
-        } else {
-          setError(data.error || "Login failed");
-        }
+        setError(data.error || "Login failed");
       }
     } catch (err) {
       setError("Waiting for approval or an unexpected error occurred.`");
@@ -233,19 +226,5 @@ function LoginContent() {
         </form>
       </div>
     </div>
-  );
-}
-
-export default function Login() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-gray-600">Loading...</div>
-        </div>
-      }
-    >
-      <LoginContent />
-    </Suspense>
   );
 }
