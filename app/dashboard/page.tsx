@@ -162,9 +162,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b ">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -177,7 +177,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Link
+              {/* <Link
                 href="/chat"
                 className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
@@ -187,7 +187,8 @@ export default function DashboardPage() {
                     {unreadMessages}
                   </span>
                 )}
-              </Link>
+              </Link> */}
+              <Link href= "/restaurant-profile" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
 
               <div className="flex items-center gap-2">
                 {user?.profileImage ? (
@@ -203,6 +204,7 @@ export default function DashboardPage() {
                 )}
                 <span className="text-gray-700">{user?.name}</span>
               </div>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
