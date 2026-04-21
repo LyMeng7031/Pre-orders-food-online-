@@ -124,40 +124,42 @@ export default function RestaurantProfilePage() {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Header Bar */}
-      <header className="bg-white border-b px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href="/dashboard" className="text-gray-500 hover:text-gray-800 flex items-center gap-1 text-sm font-medium">
-              <ChevronLeft size={18} /> Back to Dashboard
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Restaurant Profile</h1>
-              <p className="text-xs text-gray-500">Manage your restaurant information</p>
-            </div>
-          </div>
+      {/* Removed 'sticky top-0 z-10' to allow the header to scroll with the page */}
+<header className="bg-white border-b px-6 py-4">
+  <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <div className="flex items-center gap-6">
+      <Link href="/dashboard" className="text-gray-500 hover:text-gray-800 flex items-center gap-1 text-sm font-medium">
+        <ChevronLeft size={18} /> Back to Dashboard
+      </Link>
+      <div>
+        <h1 className="text-xl font-bold text-gray-900">Restaurant Profile</h1>
+        <p className="text-xs text-gray-500">Manage your restaurant information</p>
+      </div>
+    </div>
 
-          {profile && (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase ${profile.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                  {profile.isActive ? "Open" : "Closed"}
-                </span>
-                <button onClick={() => setShowStatusModal(true)} className="text-blue-600 hover:underline text-xs font-semibold">Toggle</button>
-              </div>
-              <div className="flex items-center gap-1 text-green-600 text-xs font-semibold">
-                <CheckCircle size={14} /> Approved
-              </div>
-              <button 
-                onClick={() => setIsEditing(!isEditing)}
-                className="bg-[#2563eb] text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 hover:bg-blue-700 transition-all"
-              >
-                {isEditing ? <X size={16} /> : <Edit3 size={16} />}
-                {isEditing ? "Cancel" : "Edit Profile"}
-              </button>
-            </div>
-          )}
+    {profile && (
+
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase ${profile.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+            {profile.isActive ? "Open" : "Closed"}
+          </span>
+          <button onClick={() => setShowStatusModal(true)} className="text-blue-600 hover:underline text-xs font-semibold">Toggle</button>
         </div>
-      </header>
+        <div className="flex items-center gap-1 text-green-600 text-xs font-semibold">
+          <CheckCircle size={14} /> Approved
+        </div>
+        <button 
+          onClick={() => setIsEditing(!isEditing)}
+          className="bg-[#2563eb] text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 hover:bg-blue-700 transition-all"
+        >
+          {isEditing ? <X size={16} /> : <Edit3 size={16} />}
+          {isEditing ? "Cancel" : "Edit Profile"}
+        </button>
+      </div>
+    )}
+  </div>
+</header>
 
       <main className="max-w-7xl mx-auto p-8">
         {!isEditing && profile ? (

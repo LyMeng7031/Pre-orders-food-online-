@@ -84,7 +84,7 @@ function LoginContent() {
         }
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("Waiting for approval or an unexpected error occurred.`");
     } finally {
       setLoading(false);
     }
