@@ -55,10 +55,29 @@ export default function OwnerProfilePage() {
   const router = useRouter();
 
   useEffect(() => {
+    // 1. Role Protection Logic
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        // If the logged-in user is NOT a customer, kick them out
+        if (user.role !== "CUSTOMER") {
+          console.warn("Access denied: Owners cannot place orders.");
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          router.push("/login"); // Redirect to login
+          return;
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+
+    // 2. Fetch Page Data
     fetchOwnerProfile();
     fetchProducts();
     loadCart();
-  }, [params.id]);
+  }, [params.id, router]); // Added router to dependency array
 
   const loadCart = () => {
     const savedCart = localStorage.getItem("foodCart");
@@ -69,6 +88,7 @@ export default function OwnerProfilePage() {
 
   const fetchOwnerProfile = async () => {
     try {
+      // Change /api/owner/ to /api/owners/
       const response = await fetch(`/api/owners/${params.id}`);
       const data = await response.json();
       if (response.ok) {
@@ -81,6 +101,7 @@ export default function OwnerProfilePage() {
 
   const fetchProducts = async () => {
     try {
+      // Change /api/owner/ to /api/owners/
       const response = await fetch(`/api/owners/${params.id}/products`);
       const data = await response.json();
       if (response.ok) {

@@ -51,6 +51,7 @@ export default function CheckoutPage() {
     const userData = localStorage.getItem("user");
     const cartData = localStorage.getItem("foodCart");
 
+    // 1. AUTH & ROLE PROTECTION
     if (!token || !userData) {
       router.push("/login");
       return;
@@ -58,6 +59,17 @@ export default function CheckoutPage() {
 
     try {
       const parsedUser = JSON.parse(userData);
+
+      // AUTO LOGOUT IF NOT CUSTOMER
+      if (parsedUser.role !== "CUSTOMER") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("foodCart");
+        alert("Access Denied: Only customers can access the checkout.");
+        router.push("/login");
+        return;
+      }
+
       setUser(parsedUser);
 
       if (cartData) {
@@ -96,8 +108,6 @@ export default function CheckoutPage() {
     try {
       const token = localStorage.getItem("token");
 
-      // CRITICAL FIX FOR "Product undefined":
-      // Your backend (app/api/orders/route.ts) looks for item.product
       const formattedItems = cart.map((item) => ({
         product: item._id || item.id || item.productId,
         quantity: Number(item.quantity),
@@ -121,7 +131,6 @@ export default function CheckoutPage() {
           ? orderForm.deliveryAddress
           : "Self-Pickup",
         orderNotes: orderForm.orderNotes,
-        // Using form deadline for estimatedDeliveryTime
         estimatedDeliveryTime: orderForm.deadline
           ? new Date(orderForm.deadline).toISOString()
           : null,
@@ -146,7 +155,31 @@ export default function CheckoutPage() {
         router.push("/orders");
       } else {
         console.error("Backend Error Details:", result);
-        alert(`Failed: ${result.error || "Please check your order details"}`);
+
+        // 2. SMART ERROR HANDLING FOR UNAVAILABLE PRODUCTS
+        if (
+          result.error &&
+          result.error.toLowerCase().includes("not available")
+        ) {
+          // Extract ID from error message if possible, or just inform the user
+          alert(
+            `One or more items in your cart are no longer available. We will refresh your cart.`,
+          );
+
+          // Logic: Extract the ID from backend message "Product [ID] not available"
+          const match = result.error.match(/[a-f\d]{24}/i);
+          const unavailableId = match ? match[0] : null;
+
+          if (unavailableId) {
+            const updatedCart = cart.filter(
+              (item) => (item._id || item.id) !== unavailableId,
+            );
+            setCart(updatedCart);
+            localStorage.setItem("foodCart", JSON.stringify(updatedCart));
+          }
+        } else {
+          alert(`Failed: ${result.error || "Please check your order details"}`);
+        }
       }
     } catch (error) {
       console.error("Connection error:", error);
@@ -207,7 +240,6 @@ export default function CheckoutPage() {
         </header>
 
         <div className="grid lg:grid-cols-12 gap-10">
-          {/* Left Column: Cart Items */}
           <div className="lg:col-span-7 space-y-6">
             <section className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8">
               <div className="flex items-center justify-between mb-8">
@@ -239,7 +271,6 @@ export default function CheckoutPage() {
                         </div>
                       )}
                     </div>
-
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-xl text-gray-900 mb-1 truncate">
                         {item.name}
@@ -248,7 +279,6 @@ export default function CheckoutPage() {
                         ${item.price.toFixed(2)}
                       </p>
                     </div>
-
                     <div className="flex flex-col items-end gap-3">
                       <div className="flex items-center bg-white border border-gray-200 rounded-xl p-1.5 shadow-sm">
                         <button
@@ -307,7 +337,6 @@ export default function CheckoutPage() {
             </section>
           </div>
 
-          {/* Right Column: Checkout Form */}
           <div className="lg:col-span-5">
             <form
               onSubmit={handleSubmit}
@@ -319,7 +348,6 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="space-y-6">
-                {/* Delivery Toggle */}
                 <div
                   className={`p-6 rounded-3xl border-2 transition-all duration-300 ${needsDelivery ? "border-blue-500 bg-blue-50/30" : "border-gray-100 bg-gray-50"}`}
                 >
@@ -346,7 +374,6 @@ export default function CheckoutPage() {
                       onChange={(e) => setNeedsDelivery(e.target.checked)}
                     />
                   </label>
-
                   {needsDelivery && (
                     <div className="mt-6 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                       <label className="block text-sm font-bold text-gray-700 ml-1">
@@ -369,7 +396,6 @@ export default function CheckoutPage() {
                   )}
                 </div>
 
-                {/* Phone Input */}
                 <div className="space-y-2">
                   <label className="block text-sm font-bold text-gray-700 ml-1 ">
                     <Phone className="w-4 h-4 inline mr-2 text-blue-600" />
@@ -390,7 +416,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-                {/* Deadline/Time Input */}
                 <div className="space-y-2">
                   <label className="block text-sm font-bold text-gray-700 ml-1">
                     <Clock className="w-4 h-4 inline mr-2 text-blue-600" />
@@ -407,7 +432,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-                {/* Notes Input */}
                 <div className="space-y-2">
                   <label className="block text-sm font-bold text-gray-700 ml-1">
                     <MessageSquare className="w-4 h-4 inline mr-2 text-blue-600" />
@@ -428,16 +452,13 @@ export default function CheckoutPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="relative overflow-hidden w-full bg-blue-600 text-white py-6 rounded-[2rem] font-black text-xl hover:bg-blue-700 active:scale-[0.98] transition-all shadow-2xl shadow-blue-200 disabled:opacity-50 disabled:active:scale-100"
+                    className="relative overflow-hidden w-full bg-blue-600 text-white py-6 rounded-[2rem] font-black text-xl hover:bg-blue-700 active:scale-[0.98] transition-all shadow-2xl shadow-blue-200 disabled:opacity-50"
                   >
                     <span className="relative z-10">
                       {loading
                         ? "Processing Order..."
                         : `Sent to Restaurant - $${(calculateTotal() + (needsDelivery ? 2 : 0)).toFixed(2)}`}
                     </span>
-                    {loading && (
-                      <div className="absolute inset-0 bg-blue-500/20 animate-pulse" />
-                    )}
                   </button>
                 </div>
               </div>

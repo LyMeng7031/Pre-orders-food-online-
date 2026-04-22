@@ -240,41 +240,6 @@ export default function QRCodePage() {
                 </div>
               </div>
             </div>
-
-            {/* QR Code Generator Suggestion */}
-            <div className="border-t pt-8 mt-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Recommended QR Code Generators
-              </h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <a
-                  href="https://qr-code-generator.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <h4 className="font-semibold text-gray-900">
-                    QR Code Generator
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Free online QR code generator
-                  </p>
-                </a>
-                <a
-                  href="https://www.the-qr-code-generator.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <h4 className="font-semibold text-gray-900">
-                    The QR Code Generator
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Customizable QR codes with logos
-                  </p>
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </div>
