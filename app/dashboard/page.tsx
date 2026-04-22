@@ -162,6 +162,7 @@ export default function DashboardPage() {
   }
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b ">
@@ -218,6 +219,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+=======
+      <div className="min-h-screen bg-gray-50">
+>>>>>>> develop
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
