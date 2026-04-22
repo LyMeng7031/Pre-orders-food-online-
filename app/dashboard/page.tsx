@@ -162,7 +162,7 @@ export default function DashboardPage() {
   }
 
   return (
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b ">
         <div className="container mx-auto px-4 py-4">
@@ -188,22 +188,24 @@ export default function DashboardPage() {
                   </span>
                 )}
               </Link> */}
-              <Link href= "/restaurant-profile" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-
-              <div className="flex items-center gap-2">
-                {user?.profileImage ? (
-                  <img
-                    src={user.profileImage}
-                    alt={user.name}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-gray-600" />
-                  </div>
-                )}
-                <span className="text-gray-700">{user?.name}</span>
-              </div>
+              <Link
+                href="/restaurant-profile"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  {user?.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt={user.name}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                      <Users className="w-5 h-5 text-gray-600" />
+                    </div>
+                  )}
+                  <span className="text-gray-700">{user?.name}</span>
+                </div>
               </Link>
               <button
                 onClick={handleLogout}

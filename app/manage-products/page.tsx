@@ -52,9 +52,6 @@ interface Pagination {
 }
 
 const CATEGORIES = [
-  { value: "MEALS", label: "MEALS" },
-  { value: "DRINKS", label: "DRINKS" },
-  { value: "SNACKS", label: "SNACKS" },
   { value: "DESSERTS", label: "DESSERTS" },
   { value: "APPETIZERS", label: "APPETIZERS" },
 ];
