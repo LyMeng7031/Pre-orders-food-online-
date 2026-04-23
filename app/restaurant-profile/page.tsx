@@ -44,7 +44,7 @@ interface RestaurantProfile {
 const CUISINE_TYPES = [{ value: "vietnamese", label: "Vietnamese" }, { value: "khmer", label: "Khmer" }];
 const DEFAULT_OPENING_HOURS = { monday: "09:00-22:00", tuesday: "09:00-22:00", wednesday: "09:00-22:00", thursday: "09:00-22:00", friday: "09:00-22:00", saturday: "09:00-23:00", sunday: "09:00-23:00" };
 
-// --- SUB-COMPONENT: EDIT FORM (Defined outside to prevent focus loss) ---
+// --- SUB-COMPONENT: EDIT FORM ---
 const ProfileForm = ({ formData, setFormData, errors, handleImageUpload, imagePreview, removeImage, isCreate, cancelEditing, handleSubmit, submitting }: any) => (
   <div className="space-y-6 animate-in fade-in duration-500">
     <div>
@@ -56,7 +56,7 @@ const ProfileForm = ({ formData, setFormData, errors, handleImageUpload, imagePr
         <div className="flex flex-col gap-2">
           <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="restaurant-image" />
           <label htmlFor="restaurant-image" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium cursor-pointer flex items-center gap-2 hover:bg-blue-700"><Camera size={16} /> Upload</label>
-          {imagePreview && <button onClick={removeImage} className="text-red-500 text-sm hover:underline">Remove Image</button>}
+          {imagePreview && <button type="button" onClick={removeImage} className="text-red-500 text-sm hover:underline text-left">Remove Image</button>}
         </div>
       </div>
     </div>
@@ -102,6 +102,28 @@ export default function RestaurantProfilePage() {
     } finally { setLoading(false); }
   };
 
+  // --- FIXED IMAGE HANDLERS ---
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setImagePreview(result);
+        setFormData((prev) => ({ ...prev, restaurantImage: result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setFormData((prev) => ({ ...prev, restaurantImage: "" }));
+    // Reset file input element
+    const fileInput = document.getElementById("restaurant-image") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+  };
+
   const handleSubmit = async (isCreate = false) => {
     setSubmitting(true);
     try {
@@ -123,8 +145,7 @@ export default function RestaurantProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
-      {/* Header Bar */}
-      <header className="bg-white border-b px-6 py-4 sticky top-0 z-10">
+      <header className="bg-white border-b px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/dashboard" className="text-gray-500 hover:text-gray-800 flex items-center gap-1 text-sm font-medium">
@@ -254,7 +275,8 @@ export default function RestaurantProfilePage() {
             <h2 className="text-xl font-bold mb-6 text-gray-600">Edit Profile</h2>
             <ProfileForm 
               formData={formData} setFormData={setFormData} errors={errors} 
-              handleImageUpload={() => {}} imagePreview={imagePreview} 
+              handleImageUpload={handleImageUpload} imagePreview={imagePreview} 
+              removeImage={removeImage}
               isCreate={!profile} cancelEditing={() => setIsEditing(false)} 
               handleSubmit={handleSubmit} submitting={submitting} 
             />

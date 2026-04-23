@@ -9,190 +9,7 @@ datasource db {
   provider = "mongodb"
 }
 
-model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String   @unique
-  password   String
-  role       Role     @default(CUSTOMER)
-  phone      String?
-  address    String?
-  profileImage String?
-  
-  // Restaurant specific fields
-  restaurantName      String?
-  restaurantDescription String?
-  restaurantImage    String?
-  cuisine            String?
-  openingHours       String?
-  deliveryRadius     Float    @default(5) // in miles
-  minOrder          Float    @default(0) // minimum order amount
-  
-  // Approval status for restaurant owners
-  isApproved        Boolean   @default(false)
-  approvalDate      DateTime?
-  rejectionReason   String?
-  isActive          Boolean   @default(true)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("users")
-}
-
-model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  price        Float
-  description  String?
-  category    String?
-  image        String?
-  isAvailable Boolean   @default(true)
-  ownerId     String   @map("owner") @db.ObjectId
-  preparationTime Int @default(15) // in minutes
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("products")
-}
-
-model Order {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  items           OrderItem[]
-  totalAmount     Float
-  status          OrderStatus @default(PENDING)
-  deliveryAddress String?
-  deliveryPhone   String?
-  orderNotes      String?
-  paymentMethod    String?
-  
-  estimatedDeliveryTime DateTime?
-  actualDeliveryTime    DateTime?
-  
-  customerId String @map("customer") @db.ObjectId
-  ownerId String @map("owner") @db.ObjectId
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("orders")
-}
-
-model OrderItem {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId String  @map("product") @db.ObjectId
-  quantity Int
-  price Float
-  specialInstructions String?
-  orderId String @map("order") @db.ObjectId
-  
-  order Order @relation(fields: [orderId], references: [id])
-
-  @@map("orderitems")
-}
-
-model DeadlineOrder {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  
-  items DeadlineOrderItem[]
-  totalAmount Float
-  status DeadlineOrderStatus @default(BOOKED)
-  
-  deadlineTime DateTime
-  bookingTime DateTime @default(now())
-  preparationTime Int // in minutes
-  
-  customerName String
-  customerPhone String
-  customerEmail String
-  
-  deadlineWarningSent Boolean @default(false)
-  deadlineWarningTime DateTime?
-  
-  customerId String @map("customer") @db.ObjectId
-  ownerId String @map("owner") @db.ObjectId
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("deadlineorders")
-}
-
-model DeadlineOrderItem {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  
-  productId String  @map("product") @db.ObjectId
-  quantity Int
-  price Float
-  specialInstructions String?
-  orderId String @map("order") @db.ObjectId
-  
-  deadlineOrder DeadlineOrder @relation(fields: [orderId], references: [id])
-
-  @@map("deadlineorderitems")
-}
-
-model ChatMessage {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  
-  senderId String @map("sender") @db.ObjectId
-  recipientId String @map("recipient") @db.ObjectId
-  
-  content String
-  messageType ChatMessageType @default(TEXT)
-  
-  // For order-related messages
-  relatedOrder String? @map("relatedOrder") @db.ObjectId
-  relatedDeadlineOrder String? @map("relatedDeadlineOrder") @db.ObjectId
-  
-  // For image messages
-  imageUrl String?
-  imageName String?
-  
-  // Read status
-  isRead Boolean @default(false)
-  readAt DateTime?
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("chatmessages")
-}
-
-model Notification {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  
-  recipientId String @map("recipient") @db.ObjectId
-  senderId String? @map("sender") @db.ObjectId
-  
-  type String
-  title String
-  message String
-  
-  relatedId String? @db.ObjectId
-  relatedType String?
-  
-  priority NotificationPriority @default(MEDIUM)
-  actionUrl String?
-  
-  isRead Boolean @default(false)
-  readAt DateTime?
-  
-  // Scheduling fields for deadline notifications
-  scheduledFor DateTime?
-  isScheduled Boolean @default(false)
-  isSent Boolean @default(false)
-  sentAt DateTime?
-  deliveryMethod NotificationDeliveryMethod @default(IN_APP)
-  
-  metadata Json?
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("notifications")
-}
+// --- ENUMS ---
 
 enum Role {
   CUSTOMER
@@ -238,4 +55,212 @@ enum NotificationDeliveryMethod {
   EMAIL
   PUSH
   SMS
+}
+
+enum Category {
+  MAIN_COURSE
+  APPETIZERS
+  BEVERAGES
+  DESSERTS
+  SOUPS
+  SALADS
+  SANDWICHES
+  PASTA
+  PIZZA
+  BREAKFAST
+  MEALS        // Added to fix your validation error
+}
+
+// --- MODELS ---
+
+model User {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  email                 String   @unique
+  password              String
+  role                  Role     @default(CUSTOMER)
+  phone                 String?
+  address               String?
+  profileImage          String?
+  
+  // Restaurant specific fields
+  restaurantName        String?
+  restaurantDescription String?
+  restaurantImage       String?
+  cuisine               String?
+  openingHours          String?
+  deliveryRadius        Float    @default(5)
+  minOrder              Float    @default(0)
+  
+  // Relations
+  products              Product[] // Relation to products owned by this user
+  
+  // Approval status for restaurant owners
+  isApproved            Boolean   @default(false)
+  approvalDate          DateTime?
+  rejectionReason       String?
+  isActive              Boolean   @default(true)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Product {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  price           Float
+  description     String?
+  category        Category @default(MAIN_COURSE) // Now uses the Enum
+  image           String?
+  isAvailable     Boolean  @default(true)
+  preparationTime Int      @default(15)
+  spicyLevel      Int      @default(0)
+  
+  // New fields to match your request body
+  ingredients     String[]
+  allergens       String[]
+  
+  // Relations
+  ownerId         String   @map("owner") @db.ObjectId
+  owner           User     @relation(fields: [ownerId], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Order {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  items           OrderItem[]
+  totalAmount     Float
+  status          OrderStatus @default(PENDING)
+  deliveryAddress String?
+  deliveryPhone   String?
+  orderNotes      String?
+  paymentMethod   String?
+  
+  estimatedDeliveryTime DateTime?
+  actualDeliveryTime    DateTime?
+  
+  customerId      String @map("customer") @db.ObjectId
+  ownerId         String @map("owner") @db.ObjectId
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId           String   @map("product") @db.ObjectId
+  quantity            Int
+  price               Float
+  specialInstructions String?
+  orderId             String   @map("order") @db.ObjectId
+  
+  order               Order    @relation(fields: [orderId], references: [id])
+
+  @@map("orderitems")
+}
+
+model DeadlineOrder {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  items               DeadlineOrderItem[]
+  totalAmount         Float
+  status              DeadlineOrderStatus @default(BOOKED)
+  
+  deadlineTime        DateTime
+  bookingTime         DateTime @default(now())
+  preparationTime     Int 
+  
+  customerName        String
+  customerPhone       String
+  customerEmail       String
+  
+  deadlineWarningSent Boolean @default(false)
+  deadlineWarningTime DateTime?
+  
+  customerId          String @map("customer") @db.ObjectId
+  ownerId             String @map("owner") @db.ObjectId
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("deadlineorders")
+}
+
+model DeadlineOrderItem {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  productId           String  @map("product") @db.ObjectId
+  quantity            Int
+  price               Float
+  specialInstructions String?
+  orderId             String @map("order") @db.ObjectId
+  
+  deadlineOrder       DeadlineOrder @relation(fields: [orderId], references: [id])
+
+  @@map("deadlineorderitems")
+}
+
+model ChatMessage {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  senderId             String   @map("sender") @db.ObjectId
+  recipientId          String   @map("recipient") @db.ObjectId
+  
+  content              String
+  messageType          ChatMessageType @default(TEXT)
+  
+  relatedOrder         String? @map("relatedOrder") @db.ObjectId
+  relatedDeadlineOrder String? @map("relatedDeadlineOrder") @db.ObjectId
+  
+  imageUrl             String?
+  imageName            String?
+  
+  isRead               Boolean @default(false)
+  readAt               DateTime?
+  
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("chatmessages")
+}
+
+model Notification {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  recipientId        String   @map("recipient") @db.ObjectId
+  senderId           String?  @map("sender") @db.ObjectId
+  
+  type               String
+  title              String
+  message            String
+  
+  relatedId          String? @db.ObjectId
+  relatedType        String?
+  
+  priority           NotificationPriority @default(MEDIUM)
+  actionUrl          String?
+  
+  isRead             Boolean @default(false)
+  readAt             DateTime?
+  
+  scheduledFor       DateTime?
+  isScheduled        Boolean @default(false)
+  isSent             Boolean @default(false)
+  sentAt             DateTime?
+  deliveryMethod     NotificationDeliveryMethod @default(IN_APP)
+  
+  metadata           Json?
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("notifications")
 }

@@ -1,5 +1,5 @@
-import Sidebar from "@/components/Sidebar";
-import Topbar from "@/components/Header";
+import SidebarAdmin from "@/components/SidebarAdmin";
+import Topbar from "@/components/Topbar";
 
 export default function DashboardLayout({
   children,
@@ -8,7 +8,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar />
+      <SidebarAdmin />
 
       <div className="flex-1 flex flex-col">
         <Topbar />

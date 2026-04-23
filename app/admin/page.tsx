@@ -30,11 +30,6 @@ interface Owner {
   createdAt: string;
 }
 
-const menuItems = [
-  { label: "Dashboard", icon: BarChart3, active: true },
-  { label: "Owners", icon: Users, active: false },
-  { label: "Settings", icon: Settings, active: false },
-];
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
@@ -162,43 +157,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-gray-50 font-sans">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-sm h-screen sticky top-0 flex flex-col border-r border-gray-200">
-        <div className="flex items-center gap-3 p-6 border-b border-gray-100">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-md">
-            <Utensils size={20} />
-          </div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">FoodAdmin</h1>
-        </div>
-        <nav className="flex-1 p-4">
-          <ul className="space-y-1">
-            {menuItems.map((item) => (
-              <li
-                key={item.label}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all ${
-                  item.active ? "text-blue-600 bg-blue-50 font-semibold" : "text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                <item.icon size={18} />
-                <span className="text-sm">{item.label}</span>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </aside>
-
       {/* Main Content */}
       <main className="flex-1">
-        <header className="bg-white border-b sticky top-0 z-10 px-8 py-5 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Owners Management</h1>
-            <p className="text-sm text-gray-400">Review and verify restaurant applications</p>
-          </div>
-          <button onClick={handleLogout} className="flex items-center gap-2 text-gray-400 hover:text-red-600 transition-colors py-2 px-4 rounded-lg hover:bg-red-50">
-            <LogOut size={18} />
-            <span className="text-sm font-medium">Logout</span>
-          </button>
-        </header>
 
         <div className="p-8">
           {/* Stats Bar */}

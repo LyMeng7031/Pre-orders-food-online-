@@ -11,6 +11,7 @@ import {
   Eye,
   Filter,
   Search,
+  ChevronLeft,
 } from "lucide-react";
 
 interface Order {
@@ -150,22 +151,26 @@ export default function OrdersPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {user?.role === "CUSTOMER"
-              ? "My Orders"
-              : user?.role === "OWNER"
-                ? "Restaurant Orders"
-                : "All Orders"}
-          </h1>
-
-          {user?.role === "CUSTOMER" && (
+          <div className="flex items-center gap-4">
+            {/* Back Button */}
             <Link
-              href="/menu"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              href="/dashboard"
+              className="p-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:text-blue-600 hover:border-blue-100 hover:shadow-sm transition-all"
             >
-              Order More Food
+              <ChevronLeft className="w-5 h-5" />
             </Link>
-          )}
+
+            {/* Dynamic Title */}
+            <h1 className="text-3xl font-bold text-gray-900">
+              {user?.role === "CUSTOMER"
+                ? "My Orders"
+                : user?.role === "OWNER"
+                  ? "Restaurant Orders"
+                  : "All Orders"}
+            </h1>
+          </div>
+
+          {/* Optional: You can put a Filter or Search button here in the future */}
         </div>
 
         {/* Search and Filter */}
@@ -217,14 +222,6 @@ export default function OrdersPage() {
                   ? "Place your first order to see it here!"
                   : "Orders will appear here when customers place them."}
             </p>
-            {user?.role === "CUSTOMER" && (
-              <Link
-                href="/menu"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-              >
-                Browse Menu
-              </Link>
-            )}
           </div>
         ) : (
           <div className="space-y-4">
@@ -263,18 +260,14 @@ export default function OrdersPage() {
                   </div>
 
                   <div className="text-right">
+                    {/* Keep only the main Order Status */}
                     <span
                       className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}
                     >
                       {order.status}
                     </span>
-                    <div className="mt-2">
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getPaymentStatusColor(order.paymentStatus)}`}
-                      >
-                        {order.paymentStatus}
-                      </span>
-                    </div>
+
+                    {/* I deleted the Payment Status block that was here */}
                   </div>
                 </div>
 
@@ -315,14 +308,6 @@ export default function OrdersPage() {
                       {order.deliveryPhone}
                     </div>
                   </div>
-
-                  <Link
-                    href={`/orders/${order._id}`}
-                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    <Eye className="w-4 h-4" />
-                    View Details
-                  </Link>
                 </div>
               </div>
             ))}
