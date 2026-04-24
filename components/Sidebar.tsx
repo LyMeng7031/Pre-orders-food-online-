@@ -34,7 +34,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-white shadow h-screen flex flex-col border-r border-gray-200">
       {/* Logo Section */}
-      <div className="flex items-center gap-3 p-4 pb-4 border-b border-gray-200">
+      <div className="flex items-center gap-3 p-4 pb-8 border-b border-gray-200">
         <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
           <Utensils size={20} className="text-white" />
         </div>
