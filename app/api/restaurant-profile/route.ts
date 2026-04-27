@@ -76,6 +76,7 @@ export async function GET(request: NextRequest) {
           restaurantName: restaurant.restaurantName,
           restaurantDescription: restaurant.restaurantDescription,
           restaurantImage: restaurant.restaurantImage,
+          backgroundImage: restaurant.backgroundImage,
           cuisine: restaurant.cuisine,
           openingHours: restaurant.openingHours,
           deliveryRadius: restaurant.deliveryRadius,
@@ -99,13 +100,21 @@ export async function PUT(request: NextRequest) {
   try {
     // Verify authentication
     const authHeader = request.headers.get("authorization");
+    console.log("🔍 Auth header received:", authHeader); // Debug log
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("❌ No auth header or invalid format");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const token = authHeader.split(" ")[1];
+    console.log("🔍 Token extracted:", token ? "Token exists" : "No token"); // Debug log
+
     const decoded = verifyToken(token);
+    console.log("🔍 Token verification result:", decoded ? "Valid" : "Invalid"); // Debug log
+
     if (!decoded) {
+      console.error("❌ Token verification failed");
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
@@ -119,6 +128,7 @@ export async function PUT(request: NextRequest) {
       restaurantName,
       restaurantDescription,
       restaurantImage,
+      backgroundImage,
       cuisine,
       openingHours,
       deliveryRadius,
@@ -153,6 +163,7 @@ export async function PUT(request: NextRequest) {
           restaurantName,
           restaurantDescription,
           restaurantImage,
+          backgroundImage,
           cuisine,
           openingHours,
           deliveryRadius,

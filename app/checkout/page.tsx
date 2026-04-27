@@ -457,7 +457,7 @@ export default function CheckoutPage() {
                     <span className="relative z-10">
                       {loading
                         ? "Processing Order..."
-                        : `Sent to Restaurant - $${(calculateTotal() + (needsDelivery ? 2 : 0)).toFixed(2)}`}
+                        : `Sent to  - $${(calculateTotal() + (needsDelivery ? 2 : 0)).toFixed(2)}`}
                     </span>
                   </button>
                 </div>

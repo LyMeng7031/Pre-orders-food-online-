@@ -27,6 +27,7 @@ interface RestaurantProfile {
   restaurantName?: string;
   restaurantDescription?: string;
   restaurantImage?: string;
+
   cuisine?: string;
   openingHours?: string;
   deliveryRadius: number;

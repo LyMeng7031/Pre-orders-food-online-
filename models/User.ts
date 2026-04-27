@@ -16,11 +16,12 @@ const UserSchema = new mongoose.Schema({
   restaurantName: String,
   restaurantDescription: String,
   restaurantImage: String,
+  backgroundImage: String,
   cuisine: String,
   openingHours: String,
   deliveryRadius: { type: Number, default: 5 }, // in miles
   minOrder: { type: Number, default: 0 }, // minimum order amount
-  
+
   // Approval status for restaurant owners
   isApproved: { type: Boolean, default: false },
   approvalDate: { type: Date },

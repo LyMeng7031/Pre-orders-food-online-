@@ -383,7 +383,7 @@ export default function OrdersPage() {
                         <span className="font-semibold text-gray-700">
                           {item.quantity}x
                         </span>{" "}
-                        {item.product.name}
+                        {item.product?.name || "Unknown Product"}
                       </div>
                       <span className="font-medium">
                         ${(item.quantity * item.price).toFixed(2)}

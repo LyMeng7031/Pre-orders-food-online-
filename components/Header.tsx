@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Store,
-  Users,
-  LogOut,
-  Bell,
-} from "lucide-react";
+import { Store, Users, LogOut, Bell } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface User {
@@ -44,7 +39,6 @@ export default function Navbar() {
     <div className="bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          
           {/* LEFT */}
           <div className="flex items-center gap-4">
             <Store className="w-8 h-8 text-blue-600" />
@@ -61,9 +55,8 @@ export default function Navbar() {
 
           {/* RIGHT */}
           <div className="flex items-center gap-4">
-
             {/* 👤 Profile */}
-            <Link
+            {/* <Link
               href="/restaurant-profile"
               className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-lg transition"
             >
@@ -82,7 +75,7 @@ export default function Navbar() {
               <span className="text-gray-700 font-medium">
                 {user?.name ?? "User"}
               </span>
-            </Link>
+            </Link> */}
 
             {/* 🚪 Logout */}
             <button
@@ -92,7 +85,6 @@ export default function Navbar() {
               <LogOut className="w-5 h-5" />
               Logout
             </button>
-
           </div>
         </div>
       </div>
